@@ -1,0 +1,6 @@
+{
+  "name": "Carry Theory",
+  "description": "Carry Theory — For Every Form. Luxury everyday essentials including insulated tumblers, corporate mugs, ceramic mugs, MagSafe wallets, digital alarm clocks, and bespoke corporate gifting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
