@@ -30,22 +30,44 @@ export function ContactPage() {
     e.preventDefault();
     setSubmitting(true);
     setError('');
+    const payload = {
+      type: 'contact' as const,
+      fullName: form.fullName,
+      company: '',
+      email: form.email,
+      phone: form.phone,
+      productInterest: 'General Enquiry',
+      estimatedQuantity: '',
+      customisationRequirements: '',
+      message: form.message,
+    };
     try {
-      const res = await fetch('/api/enquiries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'contact',
-          fullName: form.fullName,
-          company: '',
-          email: form.email,
-          phone: form.phone,
-          productInterest: 'General Enquiry',
-          estimatedQuantity: '',
-          customisationRequirements: '',
-          message: form.message,
-        }),
-      });
+      let res: Response | null = null;
+      try {
+        res = await fetch('/api/enquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        res = null;
+      }
+
+      const contentType = res?.headers.get('content-type') || '';
+      if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+        try {
+          const existing = JSON.parse(window.localStorage.getItem('carry_theory_enquiries_v1') || '[]');
+          const next = Array.isArray(existing)
+            ? [{ id: `enq-${Date.now()}`, ...payload, createdAt: new Date().toISOString() }, ...existing].slice(0, 25)
+            : [{ id: `enq-${Date.now()}`, ...payload, createdAt: new Date().toISOString() }];
+          window.localStorage.setItem('carry_theory_enquiries_v1', JSON.stringify(next));
+        } catch {
+          // Ignore storage quota errors
+        }
+        setSent(true);
+        return;
+      }
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not send message.');
       setSent(true);

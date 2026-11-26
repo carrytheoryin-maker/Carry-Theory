@@ -80,14 +80,40 @@ export function HomePage() {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newsletterEmail.trim()) return;
+    const trimmedEmail = newsletterEmail.trim();
+    if (!trimmedEmail) return;
     setNewsletterStatus({ type: 'submitting', message: '' });
     try {
-      const res = await fetch('/api/subscribers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newsletterEmail.trim() }),
-      });
+      let res: Response | null = null;
+      try {
+        res = await fetch('/api/subscribers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: trimmedEmail }),
+        });
+      } catch {
+        res = null;
+      }
+
+      const contentType = res?.headers.get('content-type') || '';
+      if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+        try {
+          const existing = JSON.parse(window.localStorage.getItem('carry_theory_subscribers_v1') || '[]');
+          const next = Array.isArray(existing)
+            ? Array.from(new Set([...existing, trimmedEmail.toLowerCase()]))
+            : [trimmedEmail.toLowerCase()];
+          window.localStorage.setItem('carry_theory_subscribers_v1', JSON.stringify(next));
+        } catch {
+          // Ignore storage quota errors
+        }
+        setNewsletterStatus({
+          type: 'success',
+          message: 'Thank you for joining Carry Theory.',
+        });
+        setNewsletterEmail('');
+        return;
+      }
+
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || 'Could not subscribe at this moment.');

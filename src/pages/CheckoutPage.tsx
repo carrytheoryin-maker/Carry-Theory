@@ -14,6 +14,7 @@ export function CheckoutPage() {
     cartSubtotal,
     clearCart,
     refreshStorefront,
+    decrementLocalStock,
   } = useStore();
 
   const [form, setForm] = useState({
@@ -67,28 +68,88 @@ export function CheckoutPage() {
     }
   };
 
+  const buildLocalOrder = (): Order => {
+    const customRequested = hasCustomisableItem && wantsCustomisation;
+    const localOrder: Order = {
+      id: `ord-${Date.now()}`,
+      orderNumber: `CT-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      customerName: form.customerName.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      address: form.address.trim(),
+      city: form.city.trim(),
+      state: form.state.trim(),
+      pinCode: form.pinCode.trim(),
+      items: cart.map((item) => ({
+        productId: item.productId,
+        productName: item.name,
+        variantId: item.variantId,
+        variantLabel: item.variantLabel,
+        sku: item.sku,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+      })),
+      subtotal: cartSubtotal,
+      customisationRequested: customRequested,
+      customisationFee: customRequested ? customFeeRate : 0,
+      deliveryCharges,
+      total: finalTotal,
+      paymentMode,
+      paymentStatus: paymentMode === 'cod' ? 'cod_pending' : 'upi_pending_verification',
+      upiTransactionRef: paymentMode === 'upi' ? upiTransactionRef.trim() || undefined : undefined,
+      fulfilmentStatus: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+    try {
+      const existing = JSON.parse(window.localStorage.getItem('carry_theory_orders_v1') || '[]');
+      const next = Array.isArray(existing) ? [localOrder, ...existing].slice(0, 25) : [localOrder];
+      window.localStorage.setItem('carry_theory_orders_v1', JSON.stringify(next));
+    } catch {
+      // Ignore storage quota errors
+    }
+    return localOrder;
+  };
+
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
     setSubmitting(true);
     setError('');
 
+    const orderItemsPayload = cart.map((item) => ({
+      productId: item.productId,
+      variantId: item.variantId,
+      quantity: item.quantity,
+    }));
+
     try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          customisationRequested: hasCustomisableItem && wantsCustomisation,
-          paymentMode,
-          upiTransactionRef: paymentMode === 'upi' ? upiTransactionRef.trim() : '',
-          items: cart.map((item) => ({
-            productId: item.productId,
-            variantId: item.variantId,
-            quantity: item.quantity,
-          })),
-        }),
-      });
+      let res: Response | null = null;
+      try {
+        res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...form,
+            customisationRequested: hasCustomisableItem && wantsCustomisation,
+            paymentMode,
+            upiTransactionRef: paymentMode === 'upi' ? upiTransactionRef.trim() : '',
+            items: orderItemsPayload,
+          }),
+        });
+      } catch {
+        res = null;
+      }
+
+      const contentType = res?.headers.get('content-type') || '';
+      if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+        const localOrder = buildLocalOrder();
+        decrementLocalStock(orderItemsPayload);
+        clearCart();
+        setConfirmedOrder(localOrder);
+        return;
+      }
+
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || 'Could not process order.');

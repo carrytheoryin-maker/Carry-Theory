@@ -1,4 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import {
+  DEFAULT_CATEGORIES,
+  DEFAULT_PRODUCTS,
+  DEFAULT_REVIEWS,
+  DEFAULT_SITE_CONFIG,
+} from '../data/catalog';
 import type {
   CartItem,
   Category,
@@ -9,6 +15,12 @@ import type {
   StorefrontBootstrap,
 } from '../types';
 
+interface StockOrderItem {
+  productId: string;
+  variantId?: string;
+  quantity: number;
+}
+
 interface StoreContextValue {
   loading: boolean;
   error: string | null;
@@ -17,6 +29,7 @@ interface StoreContextValue {
   products: Product[];
   reviews: Review[];
   refreshStorefront: () => Promise<void>;
+  decrementLocalStock: (items: StockOrderItem[]) => void;
   cart: CartItem[];
   cartCount: number;
   cartSubtotal: number;
@@ -29,6 +42,7 @@ interface StoreContextValue {
 }
 
 const CART_STORAGE_KEY = 'carry_theory_cart_v1';
+const LOCAL_STOCK_STORAGE_KEY = 'carry_theory_local_stock_v1';
 
 const StoreContext = createContext<StoreContextValue | null>(null);
 
@@ -43,13 +57,66 @@ function loadPersistedCart(): CartItem[] {
   }
 }
 
+function loadLocalStockMap(): Record<string, number> {
+  try {
+    const raw = window.localStorage.getItem(LOCAL_STOCK_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, number>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function applyLocalStock(productsList: Product[]): Product[] {
+  const stockMap = loadLocalStockMap();
+  if (Object.keys(stockMap).length === 0) return productsList;
+
+  return productsList.map((product) => {
+    if (product.variants.length > 0) {
+      const updatedVariants = product.variants.map((variant) => {
+        const key = `${product.id}::${variant.id}`;
+        const savedStock = stockMap[key];
+        if (typeof savedStock === 'number') {
+          const nextStock = Math.max(0, savedStock);
+          return {
+            ...variant,
+            stock: nextStock,
+            available: variant.available && nextStock > 0,
+          };
+        }
+        return variant;
+      });
+      const totalStock = updatedVariants.reduce((sum, v) => sum + v.stock, 0);
+      return {
+        ...product,
+        variants: updatedVariants,
+        stock: totalStock,
+      };
+    }
+
+    const savedProductStock = stockMap[product.id];
+    if (typeof savedProductStock === 'number') {
+      return {
+        ...product,
+        stock: Math.max(0, savedProductStock),
+      };
+    }
+    return product;
+  });
+}
+
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(DEFAULT_SITE_CONFIG);
+  const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
+  const [products, setProducts] = useState<Product[]>(() =>
+    applyLocalStock(DEFAULT_PRODUCTS.filter((p) => p.published))
+  );
+  const [reviews, setReviews] = useState<Review[]>(() =>
+    DEFAULT_REVIEWS.filter((r) => r.approved)
+  );
 
   const [cart, setCart] = useState<CartItem[]>(loadPersistedCart);
   const [cartOpen, setCartOpen] = useState(false);
@@ -57,17 +124,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const refreshStorefront = useCallback(async () => {
     try {
       const res = await fetch('/api/storefront');
-      if (!res.ok) throw new Error('Unable to load Carry Theory storefront');
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok || !contentType.includes('application/json')) {
+        return;
+      }
       const data = (await res.json()) as StorefrontBootstrap;
-      setSiteConfig(data.siteConfig);
-      setCategories(data.categories);
-      setProducts(data.products);
-      setReviews(data.reviews);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to load storefront');
-    } finally {
-      setLoading(false);
+      if (data?.siteConfig && Array.isArray(data.products) && Array.isArray(data.categories)) {
+        setSiteConfig(data.siteConfig);
+        setCategories(data.categories);
+        setProducts(data.products);
+        setReviews(Array.isArray(data.reviews) ? data.reviews : DEFAULT_REVIEWS);
+        setError(null);
+      }
+    } catch {
+      // Running in static/offline mode (e.g., Vercel static deployment); bundled defaults remain active
     }
   }, []);
 
@@ -82,6 +152,52 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       // Ignore storage quota issues gracefully
     }
   }, [cart]);
+
+  const decrementLocalStock = useCallback((items: StockOrderItem[]) => {
+    setProducts((prevProducts) => {
+      const stockMap = loadLocalStockMap();
+      const nextProducts = prevProducts.map((product) => {
+        const matchingItems = items.filter((item) => item.productId === product.id);
+        if (matchingItems.length === 0) return product;
+
+        if (product.variants.length > 0) {
+          const updatedVariants = product.variants.map((variant) => {
+            const qty = matchingItems
+              .filter((m) => m.variantId === variant.id)
+              .reduce((sum, m) => sum + m.quantity, 0);
+            if (qty <= 0) return variant;
+            const nextStock = Math.max(0, variant.stock - qty);
+            stockMap[`${product.id}::${variant.id}`] = nextStock;
+            return {
+              ...variant,
+              stock: nextStock,
+              available: variant.available && nextStock > 0,
+            };
+          });
+          return {
+            ...product,
+            variants: updatedVariants,
+            stock: updatedVariants.reduce((sum, v) => sum + v.stock, 0),
+          };
+        }
+
+        const qty = matchingItems.reduce((sum, m) => sum + m.quantity, 0);
+        const nextStock = Math.max(0, product.stock - qty);
+        stockMap[product.id] = nextStock;
+        return {
+          ...product,
+          stock: nextStock,
+        };
+      });
+
+      try {
+        window.localStorage.setItem(LOCAL_STOCK_STORAGE_KEY, JSON.stringify(stockMap));
+      } catch {
+        // Ignore storage quota errors
+      }
+      return nextProducts;
+    });
+  }, []);
 
   const addToCart = useCallback(
     (product: Product, variant?: ProductVariant, quantity = 1, openDrawer = true) => {
@@ -163,6 +279,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         products,
         reviews,
         refreshStorefront,
+        decrementLocalStock,
         cart,
         cartCount,
         cartSubtotal,

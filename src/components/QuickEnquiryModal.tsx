@@ -27,20 +27,42 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
     e.preventDefault();
     setSubmitting(true);
     setError('');
+    const payload = {
+      type: 'customisation' as const,
+      fullName,
+      email,
+      phone,
+      productInterest: productName,
+      customisationRequirements,
+      message: `Customisation enquiry for ${productName}`,
+    };
     try {
-      const res = await fetch('/api/enquiries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'customisation',
-          fullName,
-          email,
-          phone,
-          productInterest: productName,
-          customisationRequirements,
-          message: `Customisation enquiry for ${productName}`,
-        }),
-      });
+      let res: Response | null = null;
+      try {
+        res = await fetch('/api/enquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        res = null;
+      }
+
+      const contentType = res?.headers.get('content-type') || '';
+      if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+        try {
+          const existing = JSON.parse(window.localStorage.getItem('carry_theory_enquiries_v1') || '[]');
+          const next = Array.isArray(existing)
+            ? [{ id: `enq-${Date.now()}`, ...payload, createdAt: new Date().toISOString() }, ...existing].slice(0, 25)
+            : [{ id: `enq-${Date.now()}`, ...payload, createdAt: new Date().toISOString() }];
+          window.localStorage.setItem('carry_theory_enquiries_v1', JSON.stringify(next));
+        } catch {
+          // Ignore storage quota errors
+        }
+        setSubmitted(true);
+        return;
+      }
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not submit enquiry.');
       setSubmitted(true);
