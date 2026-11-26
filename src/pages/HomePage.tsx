@@ -15,6 +15,7 @@ import { ProductCard } from '../components/ProductCard';
 import { SafeImage } from '../components/SafeImage';
 import { useStore } from '../context/StoreContext';
 import { usePageSeo } from '../utils/format';
+import { syncSubscriberToGoogleSheet } from '../utils/googleSheetsWebhook';
 
 const PILLAR_ICONS = {
   shield: ShieldCheck,
@@ -97,6 +98,7 @@ export function HomePage() {
 
       const contentType = res?.headers.get('content-type') || '';
       if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+        await syncSubscriberToGoogleSheet(trimmedEmail);
         try {
           const existing = JSON.parse(window.localStorage.getItem('carry_theory_subscribers_v1') || '[]');
           const next = Array.isArray(existing)
@@ -118,6 +120,7 @@ export function HomePage() {
       if (!res.ok) {
         throw new Error(data.error || 'Could not subscribe at this moment.');
       }
+      await syncSubscriberToGoogleSheet(trimmedEmail);
       setNewsletterStatus({
         type: 'success',
         message: data.message || 'Thank you for joining Carry Theory.',

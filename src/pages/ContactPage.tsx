@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Check, Instagram, Mail, MessageCircle } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { buildWhatsAppUrl, usePageSeo } from '../utils/format';
+import { syncEnquiryToGoogleSheet } from '../utils/googleSheetsWebhook';
 
 export function ContactPage() {
   const { siteConfig } = useStore();
@@ -55,6 +56,7 @@ export function ContactPage() {
 
       const contentType = res?.headers.get('content-type') || '';
       if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+        await syncEnquiryToGoogleSheet(payload);
         try {
           const existing = JSON.parse(window.localStorage.getItem('carry_theory_enquiries_v1') || '[]');
           const next = Array.isArray(existing)
@@ -70,6 +72,7 @@ export function ContactPage() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not send message.');
+      await syncEnquiryToGoogleSheet(payload);
       setSent(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to send message.');

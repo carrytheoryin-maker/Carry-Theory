@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { buildWhatsAppUrl } from '../utils/format';
+import { syncEnquiryToGoogleSheet } from '../utils/googleSheetsWebhook';
 
 interface QuickEnquiryModalProps {
   open: boolean;
@@ -50,6 +51,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
 
       const contentType = res?.headers.get('content-type') || '';
       if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+        await syncEnquiryToGoogleSheet(payload);
         try {
           const existing = JSON.parse(window.localStorage.getItem('carry_theory_enquiries_v1') || '[]');
           const next = Array.isArray(existing)
@@ -65,6 +67,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not submit enquiry.');
+      await syncEnquiryToGoogleSheet(payload);
       setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to send enquiry.');

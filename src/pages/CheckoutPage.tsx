@@ -5,6 +5,7 @@ import { SafeImage } from '../components/SafeImage';
 import { useStore } from '../context/StoreContext';
 import type { Order } from '../types';
 import { formatINR, usePageSeo } from '../utils/format';
+import { syncOrderToGoogleSheet } from '../utils/googleSheetsWebhook';
 
 export function CheckoutPage() {
   const {
@@ -144,6 +145,7 @@ export function CheckoutPage() {
       const contentType = res?.headers.get('content-type') || '';
       if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
         const localOrder = buildLocalOrder();
+        await syncOrderToGoogleSheet(localOrder);
         decrementLocalStock(orderItemsPayload);
         clearCart();
         setConfirmedOrder(localOrder);
@@ -155,9 +157,11 @@ export function CheckoutPage() {
         throw new Error(data.error || 'Could not process order.');
       }
 
+      const confirmed = data.order as Order;
+      await syncOrderToGoogleSheet(confirmed);
       clearCart();
       await refreshStorefront();
-      setConfirmedOrder(data.order as Order);
+      setConfirmedOrder(confirmed);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Checkout failed.');
     } finally {
