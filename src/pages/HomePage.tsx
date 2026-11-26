@@ -136,51 +136,53 @@ export function HomePage() {
       {/* 1. Signature Interactive Flashlight Hero */}
       <FlashlightHero siteConfig={siteConfig} />
 
-      {/* 2. Brand Positioning Section */}
+      {/* 2. Brand Positioning Section (Compact, 2 rows on mobile so products take priority) */}
       <section
         id="brand-positioning"
-        className="border-t border-[#F5F3EF]/10 bg-[#0B0B0B] py-20 sm:py-28"
+        className="border-t border-[#F5F3EF]/10 bg-[#0B0B0B] py-7 sm:py-10 lg:py-12"
       >
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
           <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-3xl"
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col lg:flex-row lg:items-end justify-between gap-2 lg:gap-8"
           >
-            <p className="text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A]">
-              Philosophy
-            </p>
-            <h2 className="mt-3 font-display text-2xl sm:text-4xl font-semibold uppercase tracking-[-0.015em] text-[#F5F3EF]">
-              {siteConfig.positioningHeading}
-            </h2>
-            <p className="mt-4 text-sm sm:text-base leading-relaxed text-[#F5F3EF]/70 max-w-2xl">
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[#C6A77A]">
+                Philosophy
+              </p>
+              <h2 className="mt-1 font-display text-lg sm:text-2xl font-semibold uppercase tracking-[-0.015em] text-[#F5F3EF]">
+                {siteConfig.positioningHeading}
+              </h2>
+            </div>
+            <p className="text-[11px] sm:text-xs leading-relaxed text-[#F5F3EF]/65 max-w-xl">
               {siteConfig.positioningSubheading}
             </p>
           </motion.div>
 
-          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-[#F5F3EF]/12">
+          <div className="mt-4 sm:mt-6 grid grid-cols-2 lg:grid-cols-4 border-t border-l border-[#F5F3EF]/12">
             {siteConfig.positioningPillars.map((pillar) => {
               const IconComponent = PILLAR_ICONS[pillar.iconName] || ShieldCheck;
               return (
                 <div
                   key={pillar.number}
-                  className="group py-8 sm:px-6 first:sm:pl-0 last:sm:pr-0 border-b sm:border-b-0 sm:border-r last:border-r-0 border-[#F5F3EF]/12 transition-colors"
+                  className="group p-3 sm:p-4 lg:p-5 border-r border-b border-[#F5F3EF]/12 transition-colors"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="tabular-nums text-[11px] font-medium tracking-[0.22em] text-[#C6A77A]">
+                  <div className="flex items-center justify-between gap-1.5">
+                    <span className="tabular-nums text-[9px] sm:text-[10px] font-medium tracking-[0.12em] sm:tracking-[0.18em] text-[#C6A77A] leading-tight">
                       {pillar.number} — {pillar.label}
                     </span>
                     <IconComponent
-                      className="h-4 w-4 text-[#C6A77A]/75 group-hover:text-[#C6A77A] transition-colors"
+                      className="h-3.5 w-3.5 text-[#C6A77A]/75 group-hover:text-[#C6A77A] transition-colors shrink-0"
                       strokeWidth={1.5}
                     />
                   </div>
-                  <h3 className="mt-5 font-display text-lg font-semibold text-[#F5F3EF] group-hover:text-[#C6A77A] transition-colors">
+                  <h3 className="mt-2 font-display text-xs sm:text-sm font-semibold text-[#F5F3EF] group-hover:text-[#C6A77A] transition-colors leading-snug">
                     {pillar.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-[#F5F3EF]/65">
+                  <p className="mt-1 text-[11px] sm:text-xs leading-snug sm:leading-relaxed text-[#F5F3EF]/62">
                     {pillar.description}
                   </p>
                 </div>
@@ -193,18 +195,18 @@ export function HomePage() {
       {/* 3. Shop By Category */}
       <section
         id="categories"
-        className="border-t border-[#F5F3EF]/10 bg-[#0E0E0E] py-20 sm:py-28"
+        className="border-t border-[#F5F3EF]/10 bg-[#0E0E0E] py-12 sm:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A]">
                 Curated Forms
               </p>
-              <h2 className="mt-3 font-display text-2xl sm:text-4xl font-semibold uppercase tracking-[-0.015em]">
+              <h2 className="mt-2 sm:mt-3 font-display text-2xl sm:text-4xl font-semibold uppercase tracking-[-0.015em]">
                 EXPLORE THE COLLECTION.
               </h2>
-              <p className="mt-3 text-sm sm:text-base text-[#F5F3EF]/65">
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[#F5F3EF]/65">
                 Essentials for every form of everyday living.
               </p>
             </div>
@@ -217,14 +219,14 @@ export function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 lg:gap-6">
+          <div className="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-5 lg:gap-6">
             {categories.map((cat, idx) => {
               // Symmetrical 2x2 editorial grid for 4 categories, adaptable if more are added
               const spanClass =
                 categories.length <= 4
-                  ? 'lg:col-span-6 aspect-[16/10]'
+                  ? 'lg:col-span-6 aspect-[4/3] sm:aspect-[16/10]'
                   : idx < 2
-                    ? 'lg:col-span-6 aspect-[16/10]'
+                    ? 'lg:col-span-6 aspect-[4/3] sm:aspect-[16/10]'
                     : idx < 5
                       ? 'lg:col-span-4 aspect-[4/3]'
                       : 'lg:col-span-6 aspect-[16/9]';
@@ -241,17 +243,17 @@ export function HomePage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/92 via-[#0B0B0B]/35 to-transparent transition-opacity duration-300 group-hover:opacity-90" />
 
-                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7 flex items-end justify-between gap-4">
+                  <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-6 lg:p-7 flex items-end justify-between gap-2 sm:gap-4">
                     <div>
-                      <span className="tabular-nums text-[10px] uppercase tracking-[0.24em] text-[#C6A77A]">
+                      <span className="tabular-nums text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-[#C6A77A]">
                         0{idx + 1}
                       </span>
-                      <h3 className="mt-1 font-display text-xl sm:text-2xl font-semibold text-[#F5F3EF]">
+                      <h3 className="mt-0.5 sm:mt-1 font-display text-sm sm:text-xl lg:text-2xl font-semibold text-[#F5F3EF]">
                         {cat.name}
                       </h3>
-                      <span className="mt-2 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[#F5F3EF]/75 group-hover:text-[#C6A77A] transition-colors">
-                        <span>Explore Collection</span>
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                      <span className="mt-1 sm:mt-2 inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#F5F3EF]/75 group-hover:text-[#C6A77A] transition-colors">
+                        <span>Explore</span>
+                        <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                       </span>
                     </div>
                   </div>
@@ -263,30 +265,30 @@ export function HomePage() {
       </section>
 
       {/* 4. Featured Products Section */}
-      <section className="border-t border-[#F5F3EF]/10 bg-[#0B0B0B] py-20 sm:py-28">
+      <section className="border-t border-[#F5F3EF]/10 bg-[#0B0B0B] py-14 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A]">
                 Signature Releases
               </p>
-              <h2 className="mt-3 font-display text-2xl sm:text-4xl font-semibold uppercase tracking-[-0.015em]">
+              <h2 className="mt-2 sm:mt-3 font-display text-2xl sm:text-4xl font-semibold uppercase tracking-[-0.015em]">
                 THE CARRY THEORY EDIT.
               </h2>
-              <p className="mt-3 text-sm sm:text-base text-[#F5F3EF]/65">
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[#F5F3EF]/65">
                 Discover the essentials that define our collection.
               </p>
             </div>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 border border-[#F5F3EF]/25 px-5 py-2.5 text-xs font-medium uppercase tracking-[0.2em] text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-2 border border-[#F5F3EF]/25 px-5 py-2.5 text-xs font-medium uppercase tracking-[0.2em] text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto"
             >
               <span>Shop All Essentials</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
             {displayProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
