@@ -105,7 +105,7 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
 
   const heroSrc =
     siteConfig.heroImageUrl ||
-    '/assets/aistudio/Warm_Studio_Travel_Gear_Showcase_7935f27e.png';
+    '/assets/aistudio/Warm_Studio_Still_Life_with_Tumblers_and_Mugs_2d1e9d8f.png';
 
   return (
     <section

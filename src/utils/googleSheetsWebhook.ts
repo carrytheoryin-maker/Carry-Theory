@@ -1,6 +1,6 @@
 import type { Order } from '../types';
 
-const WEBHOOK_URL = (import.meta.env.VITE_GOOGLE_SCRIPT_WEBHOOK_URL || '').trim();
+const WEBHOOK_URL = (import.meta.env?.VITE_GOOGLE_SCRIPT_WEBHOOK_URL || '').trim();
 
 async function sendToGoogleSheet(payload: Record<string, unknown>): Promise<boolean> {
   if (!WEBHOOK_URL) return false;

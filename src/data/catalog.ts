@@ -4,7 +4,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   brandName: 'Carry Theory',
   tagline: 'For Every Form.',
   logoUrl: '/assets/aistudio/logo-transparent.png',
-  heroImageUrl: '/assets/aistudio/Warm_Studio_Travel_Gear_Showcase_7935f27e.png',
+  heroImageUrl: '/assets/aistudio/Warm_Studio_Still_Life_with_Tumblers_and_Mugs_2d1e9d8f.png',
   heroImageObjectFit: 'cover',
   heroHeadingLine1: 'EVERYDAY ESSENTIALS.',
   heroHeadingLine2: 'FOR EVERY FORM.',
