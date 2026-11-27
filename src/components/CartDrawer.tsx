@@ -100,12 +100,14 @@ export function CartDrawer() {
                   <Link
                     to={`/products/${item.slug}`}
                     onClick={() => setCartOpen(false)}
-                    className="h-24 w-24 shrink-0 overflow-hidden bg-[#141414] border border-[#F5F3EF]/10"
+                    className="h-24 w-24 shrink-0 overflow-hidden bg-[#111111] border border-[#F5F3EF]/10"
                   >
                     <SafeImage
                       src={item.image}
                       alt={item.name}
-                      className="h-full w-full object-cover"
+                      fitMode="auto"
+                      targetRatio={1}
+                      className="h-full w-full"
                     />
                   </Link>
 

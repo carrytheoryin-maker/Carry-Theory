@@ -36,6 +36,15 @@ export function ProductDetailPage() {
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [openSection, setOpenSection] = useState<string>('description');
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [imageRatios, setImageRatios] = useState<Record<string, number>>({});
+
+  const recordImageRatio = (url: string | undefined, ratio: number) => {
+    if (!url || !Number.isFinite(ratio) || ratio <= 0) return;
+    setImageRatios((prev) => {
+      if (prev[url] && Math.abs(prev[url] - ratio) < 0.01) return prev;
+      return { ...prev, [url]: ratio };
+    });
+  };
 
   useEffect(() => {
     if (product) {
@@ -275,79 +284,100 @@ export function ProductDetailPage() {
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* Left: Product Image Gallery */}
           <div className="lg:col-span-7 lg:sticky lg:top-24 space-y-4">
-            <div
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-              className="relative aspect-[4/3] w-full overflow-hidden bg-[#121212] border border-[#F5F3EF]/12 group"
-            >
-              <div
-                onClick={() => setZoomed((z) => !z)}
-                className={`h-full w-full transition-transform duration-500 ease-out cursor-zoom-in ${
-                  zoomed ? 'scale-125 cursor-zoom-out' : 'scale-100'
-                }`}
-              >
-                <SafeImage
-                  src={galleryImages[activeImageIndex]?.url}
-                  alt={galleryImages[activeImageIndex]?.alt || product.name}
-                  loading="eager"
-                  className="h-full w-full object-cover"
-                />
-              </div>
+            {(() => {
+              const activeImage = galleryImages[activeImageIndex];
+              const activeUrl = activeImage?.url || '';
+              const rawRatio = (activeUrl && imageRatios[activeUrl]) || 4 / 3;
+              const displayRatio = Math.min(1.85, Math.max(0.72, rawRatio));
 
-              {galleryImages.length > 1 && (
-                <>
+              return (
+                <div
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                  style={{ aspectRatio: String(displayRatio), maxHeight: '78vh' }}
+                  className="relative w-full overflow-hidden bg-[#111111] border border-[#F5F3EF]/12 group flex items-center justify-center transition-[aspect-ratio] duration-300"
+                >
+                  <div
+                    onClick={() => setZoomed((z) => !z)}
+                    className={`h-full w-full flex items-center justify-center transition-transform duration-500 ease-out cursor-zoom-in ${
+                      zoomed ? 'scale-125 cursor-zoom-out' : 'scale-100'
+                    }`}
+                  >
+                    <SafeImage
+                      src={activeUrl}
+                      alt={activeImage?.alt || product.name}
+                      loading="eager"
+                      onDimensionsLoad={(dims) => recordImageRatio(activeUrl, dims.ratio)}
+                      className="max-h-[78vh] h-full w-full object-contain"
+                    />
+                  </div>
+
+                  {galleryImages.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        aria-label="Previous product image"
+                        onClick={() =>
+                          setActiveImageIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length)
+                        }
+                        className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center bg-[#0B0B0B]/75 border border-[#F5F3EF]/20 text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors cursor-pointer"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Next product image"
+                        onClick={() =>
+                          setActiveImageIndex((i) => (i + 1) % galleryImages.length)
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center bg-[#0B0B0B]/75 border border-[#F5F3EF]/20 text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors cursor-pointer"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </>
+                  )}
+
                   <button
                     type="button"
-                    aria-label="Previous product image"
-                    onClick={() =>
-                      setActiveImageIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length)
-                    }
-                    className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center bg-[#0B0B0B]/75 border border-[#F5F3EF]/20 text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors cursor-pointer"
+                    onClick={() => setFullscreenOpen(true)}
+                    aria-label="Open fullscreen gallery"
+                    className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center bg-[#0B0B0B]/80 border border-[#F5F3EF]/20 text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors cursor-pointer"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <Expand className="h-4 w-4" />
                   </button>
-                  <button
-                    type="button"
-                    aria-label="Next product image"
-                    onClick={() =>
-                      setActiveImageIndex((i) => (i + 1) % galleryImages.length)
-                    }
-                    className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center bg-[#0B0B0B]/75 border border-[#F5F3EF]/20 text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors cursor-pointer"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </>
-              )}
-
-              <button
-                type="button"
-                onClick={() => setFullscreenOpen(true)}
-                aria-label="Open fullscreen gallery"
-                className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center bg-[#0B0B0B]/80 border border-[#F5F3EF]/20 text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors cursor-pointer"
-              >
-                <Expand className="h-4 w-4" />
-              </button>
-            </div>
+                </div>
+              );
+            })()}
 
             {galleryImages.length > 1 && (
               <div className="flex items-center gap-3 overflow-x-auto pb-1">
-                {galleryImages.map((img, idx) => (
-                  <button
-                    key={`${img.url}-${idx}`}
-                    type="button"
-                    onClick={() => {
-                      setActiveImageIndex(idx);
-                      setZoomed(false);
-                    }}
-                    className={`h-20 w-24 shrink-0 overflow-hidden border transition-colors cursor-pointer ${
-                      idx === activeImageIndex
-                        ? 'border-[#C6A77A]'
-                        : 'border-[#F5F3EF]/12 opacity-65 hover:opacity-100'
-                    }`}
-                  >
-                    <SafeImage src={img.url} alt={img.alt} className="h-full w-full object-cover" />
-                  </button>
-                ))}
+                {galleryImages.map((img, idx) => {
+                  const thumbRatio = Math.min(1.65, Math.max(0.72, imageRatios[img.url] || 4 / 3));
+                  const thumbWidth = Math.round(80 * thumbRatio);
+                  return (
+                    <button
+                      key={`${img.url}-${idx}`}
+                      type="button"
+                      onClick={() => {
+                        setActiveImageIndex(idx);
+                        setZoomed(false);
+                      }}
+                      style={{ width: `${thumbWidth}px`, height: '80px' }}
+                      className={`shrink-0 overflow-hidden bg-[#111111] border transition-colors cursor-pointer ${
+                        idx === activeImageIndex
+                          ? 'border-[#C6A77A]'
+                          : 'border-[#F5F3EF]/12 opacity-65 hover:opacity-100'
+                      }`}
+                    >
+                      <SafeImage
+                        src={img.url}
+                        alt={img.alt}
+                        onDimensionsLoad={(dims) => recordImageRatio(img.url, dims.ratio)}
+                        className="h-full w-full object-contain"
+                      />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

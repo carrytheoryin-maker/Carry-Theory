@@ -475,8 +475,16 @@ export const DEFAULT_PRODUCTS: Product[] = [
     replacementPolicy: DEFAULT_REPLACEMENT,
     images: [
       {
-        url: '/src/assets/images/product_ceramic_mug_1795586431229.jpg',
+        url: '/assets/aistudio/file_00000000ff9082119d842d6d0b72da4c_27a36af9.png',
         alt: 'Carry Theory Ceramic Mug 300ml in Matte Black with White Interior',
+      },
+      {
+        url: '/assets/aistudio/Carry_Theory_Logo_on_Matte_Black_Mug_7483f5da.png',
+        alt: 'Carry Theory Logo on Matte Black Ceramic Mug held in hand',
+      },
+      {
+        url: '/assets/aistudio/Premium_Ceramic_Mug_Advertisement_21c40d58.png',
+        alt: 'Carry Theory Ceramic Mug 300ml key features and studio showcase',
       },
     ],
     variants: [
@@ -490,7 +498,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-CER-300-BLK',
         stock: 0,
         available: false,
-        imageUrl: '/src/assets/images/product_ceramic_mug_1795586431229.jpg',
+        imageUrl: '/assets/aistudio/file_00000000ff9082119d842d6d0b72da4c_27a36af9.png',
       },
     ],
     stock: 0,
