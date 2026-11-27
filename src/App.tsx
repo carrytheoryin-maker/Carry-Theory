@@ -7,6 +7,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { MotionConfig } from 'motion/react';
 import { CartDrawer } from './components/CartDrawer';
+import { CarryTheoryChat } from './components/CarryTheoryChat';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import { StoreProvider } from './context/StoreContext';
@@ -90,6 +91,7 @@ export default function App() {
               </div>
               <Footer />
               <CartDrawer />
+              <CarryTheoryChat />
             </div>
           </StoreProvider>
         </BrowserRouter>
