@@ -3,11 +3,6 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 import express, { type Request, type Response } from 'express';
 import { readDb, updateDb } from './server/db.ts';
-import {
-  formatGeminiError,
-  replyToCarryTheoryChat,
-  type ChatHistoryTurn,
-} from './server/gemini.ts';
 import type { Enquiry, Order, OrderItem } from './src/types.ts';
 
 dotenv.config();
@@ -258,34 +253,6 @@ async function startServer(): Promise<void> {
     });
 
     res.status(201).json({ order: createdOrder });
-  });
-
-  // Carry Theory Concierge AI Chat (server-side Gemini, strictly Carry Theory scoped)
-  app.post('/api/chat', async (req: Request, res: Response) => {
-    const message = sanitizeString(req.body?.message, 1000);
-    if (!message) {
-      res.status(400).json({ error: 'Please enter a question about Carry Theory.' });
-      return;
-    }
-
-    const rawHistory = Array.isArray(req.body?.history)
-      ? (req.body.history as ChatHistoryTurn[])
-      : [];
-
-    try {
-      const db = readDb();
-      const reply = await replyToCarryTheoryChat({
-        message,
-        history: rawHistory,
-        siteConfig: db.siteConfig,
-        categories: [...db.categories].sort((a, b) => a.sortOrder - b.sortOrder),
-        products: db.products.filter((p) => p.published),
-      });
-      res.json({ reply });
-    } catch (err) {
-      const formatted = formatGeminiError(err);
-      res.status(formatted.status).json({ error: formatted.message });
-    }
   });
 
   // Vite dev middleware or static dist serving

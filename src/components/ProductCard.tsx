@@ -1,18 +1,33 @@
+import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShoppingBag, Sparkles } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import type { Product } from '../types';
+import type { Product, ProductImage } from '../types';
 import { formatINR } from '../utils/format';
 import { SafeImage } from './SafeImage';
+import { StarRating } from './StarRating';
 
 interface ProductCardProps {
   product: Product;
 }
 
+function getCardImageStyle(image?: ProductImage): CSSProperties | undefined {
+  if (!image) return undefined;
+  const style: CSSProperties = {};
+  if (image.coverPosition) {
+    style.objectPosition = image.coverPosition;
+  }
+  if (image.coverScale && image.coverScale !== 1) {
+    style.transform = `scale(${image.coverScale})`;
+    style.transformOrigin = image.coverOrigin || '50% 50%';
+  }
+  return Object.keys(style).length > 0 ? style : undefined;
+}
+
 export function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useStore();
-  const primaryImage = product.images[0]?.url || '';
-  const alternateImage = product.images[1]?.url || '';
+  const primaryImage = product.images[0];
+  const alternateImage = product.images[1];
 
   const defaultVariant =
     product.variants.find((v) => v.available && v.stock > 0) || product.variants[0];
@@ -38,19 +53,27 @@ export function ProductCard({ product }: ProductCardProps) {
         to={`/products/${product.slug}`}
         className="relative block aspect-[4/3] w-full overflow-hidden bg-[#161616]"
       >
-        <SafeImage
-          src={primaryImage}
-          alt={product.images[0]?.alt || product.name}
-          className={`h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] ${
-            alternateImage ? 'group-hover:opacity-0' : ''
+        <div
+          className={`h-full w-full transition-all duration-500 ease-out group-hover:scale-[1.04] ${
+            alternateImage?.url ? 'group-hover:opacity-0' : ''
           }`}
-        />
-        {alternateImage && (
+        >
           <SafeImage
-            src={alternateImage}
-            alt={product.images[1]?.alt || product.name}
-            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-[1.04]"
+            src={primaryImage?.url || ''}
+            alt={primaryImage?.alt || product.name}
+            style={getCardImageStyle(primaryImage)}
+            className="h-full w-full object-cover"
           />
+        </div>
+        {alternateImage?.url && (
+          <div className="absolute inset-0 h-full w-full opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-[1.04]">
+            <SafeImage
+              src={alternateImage.url}
+              alt={alternateImage.alt || product.name}
+              style={getCardImageStyle(alternateImage)}
+              className="h-full w-full object-cover"
+            />
+          </div>
         )}
 
         {/* Quick View Indicator on Desktop Hover */}
@@ -76,6 +99,13 @@ export function ProductCard({ product }: ProductCardProps) {
               {product.name}
             </h3>
           </Link>
+
+          <div className="mt-1.5">
+            <StarRating
+              rating={product.rating ?? 4.7}
+              reviewCount={product.reviewCount ?? 45}
+            />
+          </div>
 
           <p className="mt-2 text-xs leading-relaxed text-[#F5F3EF]/60 line-clamp-2">
             {product.shortDescription}

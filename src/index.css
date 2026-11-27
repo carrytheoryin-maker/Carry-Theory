@@ -74,11 +74,6 @@
   }
 }
 
-.concierge-panel-height {
-  height: 76vh;
-  height: 76dvh;
-}
-
 /* Subtle champagne gold underline micro-interaction */
 .nav-link-underline {
   position: relative;

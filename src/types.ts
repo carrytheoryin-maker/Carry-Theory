@@ -1,6 +1,9 @@
 export interface ProductImage {
   url: string;
   alt: string;
+  coverPosition?: string;
+  coverScale?: number;
+  coverOrigin?: string;
 }
 
 export interface ProductVariant {
@@ -43,6 +46,8 @@ export interface Product {
   images: ProductImage[];
   variants: ProductVariant[];
   stock: number;
+  rating: number;
+  reviewCount: number;
   tags: string[];
   createdAt: string;
 }

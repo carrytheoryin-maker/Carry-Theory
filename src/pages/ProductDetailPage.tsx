@@ -15,6 +15,7 @@ import {
 import { ProductCard } from '../components/ProductCard';
 import { QuickEnquiryModal } from '../components/QuickEnquiryModal';
 import { SafeImage } from '../components/SafeImage';
+import { StarRating } from '../components/StarRating';
 import { useStore } from '../context/StoreContext';
 import { buildWhatsAppUrl, formatINR, usePageSeo } from '../utils/format';
 
@@ -99,6 +100,11 @@ export function ProductDetailPage() {
       image: galleryImages.map((img) =>
         img.url.startsWith('http') ? img.url : `${window.location.origin}${img.url}`
       ),
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: product.rating ?? 4.7,
+        reviewCount: product.reviewCount ?? 45,
+      },
       offers: {
         '@type': 'Offer',
         priceCurrency: 'INR',
@@ -398,6 +404,15 @@ export function ProductDetailPage() {
               <h1 className="mt-2 font-display text-2xl sm:text-4xl font-semibold tracking-[-0.015em] text-[#F5F3EF]">
                 {product.name}
               </h1>
+
+              <div className="mt-2.5">
+                <StarRating
+                  rating={product.rating ?? 4.7}
+                  reviewCount={product.reviewCount ?? 45}
+                  size="md"
+                  showReviewsLabel
+                />
+              </div>
 
               <div className="mt-4 flex items-baseline gap-3">
                 <span className="tabular-nums text-2xl font-semibold text-[#F5F3EF]">

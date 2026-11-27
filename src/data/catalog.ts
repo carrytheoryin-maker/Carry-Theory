@@ -153,27 +153,33 @@ export const DEFAULT_PRODUCTS: Product[] = [
     replacementPolicy: DEFAULT_REPLACEMENT,
     images: [
       {
-        url: '/src/assets/images/product_tumbler_900_1795586429011.jpg',
-        alt: 'Carry Theory Tumbler 900ml in Black',
+        url: '/assets/aistudio/DSC_5082_07b13429.JPG',
+        alt: 'Carry Theory Tumbler 900ml in White',
+        coverPosition: '56% 50%',
+        coverScale: 1.22,
+        coverOrigin: '50% 0%',
       },
       {
-        url: '/src/assets/images/product_tumbler_1200_1795586429216.jpg',
-        alt: 'Carry Theory Tumbler 900ml in White',
+        url: '/assets/aistudio/DSC_5065_74bd9b3a.JPG',
+        alt: 'Carry Theory Tumbler 900ml in Black',
+        coverPosition: '94% 50%',
+        coverScale: 1.32,
+        coverOrigin: '50% 5%',
+      },
+      {
+        url: '/assets/aistudio/DSC_5078_f61a0b24.JPG',
+        alt: 'Carry Theory Tumbler 900ml White with flip-top lid open',
+      },
+      {
+        url: '/assets/aistudio/DSC_5069_6ff640a1.JPG',
+        alt: 'Carry Theory Tumbler 900ml Black held in hand',
+      },
+      {
+        url: '/assets/aistudio/Carry_Theory_Tumbler_Showcase_bca80374.png',
+        alt: 'Carry Theory Tumbler 900ml White and Black showcase poster',
       },
     ],
     variants: [
-      {
-        id: 'var-t900-black',
-        label: '900ml - Black',
-        colorName: 'Black',
-        colorHex: '#151515',
-        size: '900 ml',
-        price: 749,
-        sku: 'CT-TMB-900-BLK',
-        stock: 4,
-        available: true,
-        imageUrl: '/src/assets/images/product_tumbler_900_1795586429011.jpg',
-      },
       {
         id: 'var-t900-white',
         label: '900ml - White',
@@ -184,10 +190,24 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-TMB-900-WHT',
         stock: 9,
         available: true,
-        imageUrl: '/src/assets/images/product_tumbler_1200_1795586429216.jpg',
+        imageUrl: '/assets/aistudio/DSC_5082_07b13429.JPG',
+      },
+      {
+        id: 'var-t900-black',
+        label: '900ml - Black',
+        colorName: 'Black',
+        colorHex: '#151515',
+        size: '900 ml',
+        price: 749,
+        sku: 'CT-TMB-900-BLK',
+        stock: 4,
+        available: true,
+        imageUrl: '/assets/aistudio/DSC_5065_74bd9b3a.JPG',
       },
     ],
     stock: 13,
+    rating: 4.8,
+    reviewCount: 64,
     tags: [
       'Carry Theory',
       'Black Tumbler',
@@ -237,27 +257,41 @@ export const DEFAULT_PRODUCTS: Product[] = [
     replacementPolicy: DEFAULT_REPLACEMENT,
     images: [
       {
-        url: '/src/assets/images/product_tumbler_1200_1795586429216.jpg',
-        alt: 'Carry Theory Tumbler 1200ml in White',
+        url: '/assets/aistudio/file_00000000422481fab48b643828f9ecfc_881ce02e.png',
+        alt: 'Carry Theory Tumbler 1200ml in White with reusable straw',
+        coverPosition: '50% 36%',
+        coverScale: 1.06,
+        coverOrigin: '0% 50%',
       },
       {
-        url: '/src/assets/images/product_tumbler_900_1795586429011.jpg',
-        alt: 'Carry Theory Tumbler 1200ml in Black',
+        url: '/assets/aistudio/file_000000008d5881f4834f6ef255f50a05_d1659cfd.png',
+        alt: 'Carry Theory Tumbler 1200ml in Black on courtside bench',
+        coverPosition: '100% 50%',
+        coverScale: 1.45,
+        coverOrigin: '60% 5%',
+      },
+      {
+        url: '/assets/aistudio/DSC_4968_2fc48b94.JPG',
+        alt: 'Carry Theory Tumbler 1200ml White top-down on pickleball court',
+      },
+      {
+        url: '/assets/aistudio/DSC_4971_52404c78.JPG',
+        alt: 'Carry Theory Tumbler 1200ml Black top-down on pickleball court',
+      },
+      {
+        url: '/assets/aistudio/DSC_5073_211cb545.JPG',
+        alt: 'Carry Theory Tumbler 1200ml Black carried by ergonomic handle',
+      },
+      {
+        url: '/assets/aistudio/DSC_5090_606554b2.JPG',
+        alt: 'Carry Theory Tumbler 1200ml White carried outdoors',
+      },
+      {
+        url: '/assets/aistudio/CARRY_THEORY_Tumbler_Showcase_40593fca.png',
+        alt: 'Carry Theory Tumbler 1200ml White and Black showcase poster',
       },
     ],
     variants: [
-      {
-        id: 'var-t1200-black',
-        label: '1200ml - Black',
-        colorName: 'Black',
-        colorHex: '#151515',
-        size: '1200 ml',
-        price: 849,
-        sku: 'CT-TMB-1200-BLK',
-        stock: 4,
-        available: true,
-        imageUrl: '/src/assets/images/product_tumbler_900_1795586429011.jpg',
-      },
       {
         id: 'var-t1200-white',
         label: '1200ml - White',
@@ -268,10 +302,24 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-TMB-1200-WHT',
         stock: 13,
         available: true,
-        imageUrl: '/src/assets/images/product_tumbler_1200_1795586429216.jpg',
+        imageUrl: '/assets/aistudio/file_00000000422481fab48b643828f9ecfc_881ce02e.png',
+      },
+      {
+        id: 'var-t1200-black',
+        label: '1200ml - Black',
+        colorName: 'Black',
+        colorHex: '#151515',
+        size: '1200 ml',
+        price: 849,
+        sku: 'CT-TMB-1200-BLK',
+        stock: 4,
+        available: true,
+        imageUrl: '/assets/aistudio/file_000000008d5881f4834f6ef255f50a05_d1659cfd.png',
       },
     ],
     stock: 17,
+    rating: 4.9,
+    reviewCount: 73,
     tags: [
       'Carry Theory',
       'Black Tumbler',
@@ -322,8 +370,24 @@ export const DEFAULT_PRODUCTS: Product[] = [
     replacementPolicy: DEFAULT_REPLACEMENT,
     images: [
       {
-        url: '/src/assets/images/product_corp_mug_nogrip_1795586430091.jpg',
-        alt: 'Carry Theory Travel Mug 380ml in White',
+        url: '/assets/aistudio/DSC_4915_727213e2.JPG',
+        alt: 'Carry Theory Travel Mug 380ml in White outdoors',
+      },
+      {
+        url: '/assets/aistudio/DSC_4992_0070f407.JPG',
+        alt: 'Hand holding Carry Theory Travel Mug 380ml in White',
+      },
+      {
+        url: '/assets/aistudio/DSC_5054_ec8d6d96.JPG',
+        alt: 'Carry Theory Travel Mug 380ml with lid next to 510ml mug',
+      },
+      {
+        url: '/assets/aistudio/DSC_4922_6e9d6c23.JPG',
+        alt: 'Carry Theory Travel Mug 380ml held in hand',
+      },
+      {
+        url: '/assets/aistudio/Premium_White_Travel_Mug_Poster_3e25a843.png',
+        alt: 'Carry Theory Travel Mug 380ml White specifications poster',
       },
     ],
     variants: [
@@ -337,10 +401,12 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-TMG-380-WHT',
         stock: 20,
         available: true,
-        imageUrl: '/src/assets/images/product_corp_mug_nogrip_1795586430091.jpg',
+        imageUrl: '/assets/aistudio/DSC_4915_727213e2.JPG',
       },
     ],
     stock: 20,
+    rating: 4.6,
+    reviewCount: 47,
     tags: [
       'Carry Theory',
       'White Travel Mug',
@@ -390,12 +456,24 @@ export const DEFAULT_PRODUCTS: Product[] = [
     replacementPolicy: DEFAULT_REPLACEMENT,
     images: [
       {
-        url: '/src/assets/images/product_corp_mug_grip_1795586431633.jpg',
-        alt: 'Carry Theory Travel Mug 510ml',
+        url: '/assets/aistudio/DSC_5007_f05b20d9.JPG',
+        alt: 'Carry Theory Travel Mug 510ml in White',
       },
       {
-        url: '/src/assets/images/product_corp_mug_nogrip_1795586430091.jpg',
-        alt: 'Carry Theory Travel Mug 510ml in White',
+        url: '/assets/aistudio/file_00000000bf788208b2a7bc531b8cec80_72d594f7.png',
+        alt: 'Carry Theory Travel Mug 510ml in Blue outdoors',
+      },
+      {
+        url: '/assets/aistudio/file_000000000abc82088193c5791c007afc_648c8a76.png',
+        alt: 'Carry Theory Logo on Blue Travel Mug 510ml held in hand',
+      },
+      {
+        url: '/assets/aistudio/DSC_4922_6e9d6c23.JPG',
+        alt: 'Carry Theory Travel Mug 510ml in White outdoors',
+      },
+      {
+        url: '/assets/aistudio/Modern_Travel_Mug_Product_Poster_f401be4a.png',
+        alt: 'Carry Theory Travel Mug 510ml key features and White and Blue colours',
       },
     ],
     variants: [
@@ -409,7 +487,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-TMG-510-WHT',
         stock: 2,
         available: true,
-        imageUrl: '/src/assets/images/product_corp_mug_nogrip_1795586430091.jpg',
+        imageUrl: '/assets/aistudio/DSC_5007_f05b20d9.JPG',
       },
       {
         id: 'var-tmg510-blue',
@@ -421,10 +499,12 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-TMG-510-BLU',
         stock: 13,
         available: true,
-        imageUrl: '/src/assets/images/product_corp_mug_grip_1795586431633.jpg',
+        imageUrl: '/assets/aistudio/file_00000000bf788208b2a7bc531b8cec80_72d594f7.png',
       },
     ],
     stock: 15,
+    rating: 4.8,
+    reviewCount: 58,
     tags: [
       'Carry Theory',
       'White Travel Mug',
@@ -502,6 +582,8 @@ export const DEFAULT_PRODUCTS: Product[] = [
       },
     ],
     stock: 0,
+    rating: 4.5,
+    reviewCount: 34,
     tags: [
       'Carry Theory',
       'Ceramic Mug',
@@ -553,8 +635,34 @@ export const DEFAULT_PRODUCTS: Product[] = [
     replacementPolicy: DEFAULT_REPLACEMENT,
     images: [
       {
-        url: '/src/assets/images/product_magsafe_wallet_1795586432223.jpg',
-        alt: 'Carry Theory MagSafe Wallet',
+        url: '/assets/aistudio/DSC_4880_ab7feb89.JPG',
+        alt: 'Carry Theory MagSafe Wallets in Dark Brown and Black attached to smartphones',
+        coverPosition: '48% 50%',
+      },
+      {
+        url: '/assets/aistudio/DSC_4884_addc3dc2.JPG',
+        alt: 'Carry Theory MagSafe Wallets in Green and Orange attached to smartphones',
+        coverPosition: '54% 52%',
+      },
+      {
+        url: '/assets/aistudio/DSC_4907_e92d9159.JPG',
+        alt: 'Close-up of Carry Theory Dark Brown MagSafe Wallet stitching and finish',
+      },
+      {
+        url: '/assets/aistudio/DSC_4894_da7e2411.JPG',
+        alt: 'Carry Theory MagSafe Wallets in Black and Dark Brown propped upright on phones',
+      },
+      {
+        url: '/assets/aistudio/DSC_4882_1ccde5fe.JPG',
+        alt: 'Carry Theory MagSafe Wallets in Dark Brown and Black angled studio view',
+      },
+      {
+        url: '/assets/aistudio/file_0000000011008208958ea4ac03517800_d0ff9350.png',
+        alt: 'Carry Theory MagSafe Wallet box includes a magnetic ring for Android users',
+      },
+      {
+        url: '/assets/aistudio/Carry_Theory_MagSafe_Wallet_Collection_ef4af585.png',
+        alt: 'Carry Theory MagSafe Wallet collection in Black, Dark Brown, Orange, and Green',
       },
     ],
     variants: [
@@ -567,6 +675,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-MSW-BLK',
         stock: 17,
         available: true,
+        imageUrl: '/assets/aistudio/DSC_4880_ab7feb89.JPG',
       },
       {
         id: 'var-msw-green',
@@ -577,6 +686,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-MSW-GRN',
         stock: 3,
         available: true,
+        imageUrl: '/assets/aistudio/DSC_4884_addc3dc2.JPG',
       },
       {
         id: 'var-msw-brown',
@@ -587,6 +697,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-MSW-DBR',
         stock: 7,
         available: true,
+        imageUrl: '/assets/aistudio/DSC_4907_e92d9159.JPG',
       },
       {
         id: 'var-msw-orange',
@@ -597,9 +708,12 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-MSW-ORG',
         stock: 6,
         available: true,
+        imageUrl: '/assets/aistudio/DSC_4884_addc3dc2.JPG',
       },
     ],
     stock: 33,
+    rating: 4.7,
+    reviewCount: 69,
     tags: [
       'Carry Theory',
       'MagSafe Wallet',
@@ -650,12 +764,20 @@ export const DEFAULT_PRODUCTS: Product[] = [
     replacementPolicy: DEFAULT_REPLACEMENT,
     images: [
       {
-        url: '/src/assets/images/product_alarm_clock_1795586434306.jpg',
+        url: '/assets/aistudio/file_00000000cf0082088396de3981c18c4e_dcadf42f.png',
         alt: 'Carry Theory Digital Focus Clock in White and Black',
       },
       {
-        url: '/src/assets/images/editorial_brand_story_1795586434801.jpg',
-        alt: 'Carry Theory Digital Focus Clock on minimalist desk',
+        url: '/assets/aistudio/DSC_4950_0a4842b3.JPG',
+        alt: 'Carry Theory Digital Focus Clock studio view with phone charging',
+      },
+      {
+        url: '/assets/aistudio/DSC_4954_26541c7e.JPG',
+        alt: 'Carry Theory Digital Focus Clock showing wireless charging interaction',
+      },
+      {
+        url: '/assets/aistudio/Digital_Focus_Clock_with_Wireless_Charging_86907daf.png',
+        alt: 'Carry Theory Digital Focus Clock key features with 15W wireless charging and LED display',
       },
     ],
     variants: [
@@ -668,10 +790,12 @@ export const DEFAULT_PRODUCTS: Product[] = [
         sku: 'CT-DIG-CLK-WB',
         stock: 6,
         available: true,
-        imageUrl: '/src/assets/images/product_alarm_clock_1795586434306.jpg',
+        imageUrl: '/assets/aistudio/file_00000000cf0082088396de3981c18c4e_dcadf42f.png',
       },
     ],
     stock: 6,
+    rating: 4.7,
+    reviewCount: 42,
     tags: [
       'Carry Theory',
       'Digital Focus Clock',

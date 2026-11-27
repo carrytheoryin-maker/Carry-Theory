@@ -10,6 +10,7 @@ interface SafeImageProps {
   src?: string;
   alt: string;
   className?: string;
+  style?: React.CSSProperties;
   loading?: 'lazy' | 'eager';
   fallbackLabel?: string;
   fitMode?: 'cover' | 'contain' | 'auto';
@@ -21,6 +22,7 @@ export function SafeImage({
   src,
   alt,
   className = 'w-full h-full object-cover',
+  style,
   loading = 'lazy',
   fallbackLabel,
   fitMode,
@@ -92,6 +94,7 @@ export function SafeImage({
       src={src}
       alt={alt}
       loading={loading}
+      style={style}
       onLoad={(e) => handleMeasure(e.currentTarget)}
       onError={() => setFailed(true)}
       className={resolvedClassName}
