@@ -28,6 +28,10 @@ export default defineConfig(() => {
         },
       },
     ],
+    build: {
+      target: ['es2020', 'safari13.1', 'chrome90', 'firefox90'],
+      cssTarget: ['safari13.1', 'chrome90', 'firefox90'],
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

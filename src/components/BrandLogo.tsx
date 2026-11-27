@@ -20,7 +20,6 @@ export function BrandLogo({
       <img
         src={effectiveLogo}
         alt={`${brandName} logo`}
-        referrerPolicy="no-referrer"
         className={`${imgClassName} select-none`}
       />
       <span>{brandName}</span>

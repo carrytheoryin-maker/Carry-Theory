@@ -1,11 +1,15 @@
 import { useEffect } from 'react';
 
 export function formatINR(amount: number): string {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(amount);
+  try {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return `₹${Math.round(amount).toLocaleString()}`;
+  }
 }
 
 export function buildWhatsAppUrl(phone: string, message: string): string {

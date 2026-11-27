@@ -146,9 +146,9 @@ export function HomePage() {
       >
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
           <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
+            initial={false}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.05 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col lg:flex-row lg:items-end justify-between gap-2 lg:gap-8"
           >
@@ -237,7 +237,7 @@ export function HomePage() {
                 <Link
                   key={cat.id}
                   to={`/collections/${cat.slug}`}
-                  className={`group relative overflow-hidden bg-[#151515] border border-[#F5F3EF]/10 hover:border-[#C6A77A]/50 transition-colors duration-300 ${spanClass}`}
+                  className={`group block w-full relative overflow-hidden bg-[#151515] border border-[#F5F3EF]/10 hover:border-[#C6A77A]/50 transition-colors duration-300 ${spanClass}`}
                 >
                   <SafeImage
                     src={cat.image}
@@ -407,10 +407,10 @@ export function HomePage() {
 
           <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12 py-20 sm:py-28">
             <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              initial={false}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true, amount: 0.05 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="max-w-xl"
             >
               <p className="text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A]">
@@ -462,7 +462,7 @@ export function HomePage() {
               value={newsletterEmail}
               onChange={(e) => setNewsletterEmail(e.target.value)}
               placeholder="Enter your email address"
-              className="flex-1 bg-[#121212] border border-[#F5F3EF]/20 px-4 py-3.5 text-sm text-[#F5F3EF] placeholder:text-[#F5F3EF]/40 focus:border-[#C6A77A] focus:outline-none"
+              className="flex-1 bg-[#121212] border border-[#F5F3EF]/20 px-4 py-3.5 text-base sm:text-sm text-[#F5F3EF] placeholder:text-[#F5F3EF]/40 focus:border-[#C6A77A] focus:outline-none"
             />
             <button
               type="submit"

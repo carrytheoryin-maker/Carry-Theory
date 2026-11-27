@@ -16,7 +16,7 @@
     color: #f5f3ef;
     font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -29,6 +29,7 @@
     background-color: #0b0b0b;
     color: #f5f3ef;
     overflow-x: hidden;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -56,26 +57,21 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Signature Flashlight Mask Layer */
-.hero-flashlight-reveal {
-  --spot-x: 54%;
-  --spot-y: 48%;
-  --spot-r: 225px;
-  -webkit-mask-image: radial-gradient(
-    circle var(--spot-r) at var(--spot-x) var(--spot-y),
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.92) 32%,
-    rgba(0, 0, 0, 0.48) 64%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: radial-gradient(
-    circle var(--spot-r) at var(--spot-x) var(--spot-y),
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.92) 32%,
-    rgba(0, 0, 0, 0.48) 64%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  will-change: mask-image, -webkit-mask-image;
+/* Cross-browser Hero Height with vh fallback for older iOS/macOS Safari */
+.hero-desktop-height {
+  min-height: 100%;
+}
+@media (min-width: 768px) {
+  .hero-desktop-height {
+    min-height: 92vh;
+    min-height: 92svh;
+  }
+}
+@media (min-width: 1024px) {
+  .hero-desktop-height {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
 }
 
 /* Subtle champagne gold underline micro-interaction */

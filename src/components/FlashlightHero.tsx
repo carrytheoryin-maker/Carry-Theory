@@ -10,35 +10,36 @@ interface FlashlightHeroProps {
 
 export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
   const containerRef = useRef<HTMLElement | null>(null);
-  const revealRef = useRef<HTMLDivElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const container = containerRef.current;
-    const reveal = revealRef.current;
-    if (!container || !reveal) return;
+    const overlay = overlayRef.current;
+    if (!container || !overlay) return;
 
     const isMobileViewport = () => window.innerWidth < 768;
 
-    const updateRadius = () => {
-      const w = container.clientWidth;
-      // Medium spotlight reach on desktop/tablet (~400px–500px diameter)
-      const radius = Math.min(250, Math.max(195, Math.round(w * 0.175)));
-      reveal.style.setProperty('--spot-r', `${radius}px`);
+    const applySpotlight = (xPx: number, yPx: number, radiusPx: number) => {
+      overlay.style.background = `radial-gradient(circle ${radiusPx}px at ${xPx.toFixed(1)}px ${yPx.toFixed(1)}px, rgba(11,11,11,0) 0%, rgba(11,11,11,0.14) 34%, rgba(11,11,11,0.66) 66%, rgba(11,11,11,0.88) 100%)`;
     };
-    updateRadius();
-    window.addEventListener('resize', updateRadius);
+
+    const getRadius = () => {
+      const w = container.clientWidth || 1200;
+      return Math.min(250, Math.max(195, Math.round(w * 0.175)));
+    };
 
     if (prefersReducedMotion || isMobileViewport()) {
-      reveal.style.setProperty('--spot-x', '56%');
-      reveal.style.setProperty('--spot-y', '48%');
-      return () => window.removeEventListener('resize', updateRadius);
+      const w = container.clientWidth || 1200;
+      const h = container.clientHeight || 720;
+      applySpotlight(w * 0.56, h * 0.48, getRadius());
+      return;
     }
 
-    let targetX = container.clientWidth * 0.56;
-    let targetY = container.clientHeight * 0.48;
-    let currentX = container.clientWidth * 0.38;
-    let currentY = container.clientHeight * 0.52;
+    let targetX = (container.clientWidth || 1200) * 0.56;
+    let targetY = (container.clientHeight || 720) * 0.48;
+    let currentX = (container.clientWidth || 1200) * 0.38;
+    let currentY = (container.clientHeight || 720) * 0.52;
     let userInteracted = false;
     let frameId = 0;
 
@@ -51,38 +52,54 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
       }
 
       const elapsed = now - startTime;
+      const w = container.clientWidth || 1200;
+      const h = container.clientHeight || 720;
 
       if (!userInteracted && elapsed < 1800) {
         const progress = Math.min(1, elapsed / 1800);
         const eased = 1 - Math.pow(1 - progress, 3);
-        targetX = container.clientWidth * (0.36 + 0.22 * eased);
-        targetY = container.clientHeight * (0.54 - 0.06 * eased);
+        targetX = w * (0.36 + 0.22 * eased);
+        targetY = h * (0.54 - 0.06 * eased);
       }
 
       currentX += (targetX - currentX) * 0.18;
       currentY += (targetY - currentY) * 0.18;
 
-      reveal.style.setProperty('--spot-x', `${currentX.toFixed(1)}px`);
-      reveal.style.setProperty('--spot-y', `${currentY.toFixed(1)}px`);
+      applySpotlight(currentX, currentY, getRadius());
       frameId = window.requestAnimationFrame(tick);
     };
 
     frameId = window.requestAnimationFrame(tick);
 
-    const onPointerMove = (e: PointerEvent) => {
+    const updateFromClientCoords = (clientX: number, clientY: number) => {
       if (isMobileViewport()) return;
       const rect = container.getBoundingClientRect();
       userInteracted = true;
-      targetX = e.clientX - rect.left;
-      targetY = e.clientY - rect.top;
+      targetX = clientX - rect.left;
+      targetY = clientY - rect.top;
     };
 
+    const onMouseMove = (e: MouseEvent) => {
+      updateFromClientCoords(e.clientX, e.clientY);
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      updateFromClientCoords(e.clientX, e.clientY);
+    };
+
+    const onResize = () => {
+      applySpotlight(currentX, currentY, getRadius());
+    };
+
+    container.addEventListener('mousemove', onMouseMove, { passive: true });
     container.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('resize', onResize, { passive: true });
 
     return () => {
       if (frameId) window.cancelAnimationFrame(frameId);
-      window.removeEventListener('resize', updateRadius);
+      container.removeEventListener('mousemove', onMouseMove);
       container.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('resize', onResize);
     };
   }, [prefersReducedMotion]);
 
@@ -94,15 +111,16 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
     <section
       ref={containerRef}
       aria-label="Carry Theory Showcase"
-      className="relative w-full overflow-hidden bg-[#0B0B0B] pt-[72px] md:pt-0 md:min-h-[92svh] lg:min-h-[100svh] md:flex md:items-end"
+      className="hero-desktop-height relative w-full overflow-hidden bg-[#0B0B0B] pt-[72px] md:pt-0 md:flex md:items-end"
     >
       {/* Mobile Showcase Image: Full Uncropped Product View with No Flashlight */}
-      <div className="md:hidden relative w-full aspect-video bg-[#0B0B0B]">
+      <div className="md:hidden relative w-full bg-[#0B0B0B]">
         <img
           src={heroSrc}
           alt="Carry Theory curated essentials showcase"
-          referrerPolicy="no-referrer"
-          className="h-full w-full object-contain object-center"
+          width={1920}
+          height={1080}
+          className="block w-full h-auto object-contain object-center"
         />
         <div
           aria-hidden="true"
@@ -110,39 +128,27 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
         />
       </div>
 
-      {/* Desktop Layer 1: Darkened Showroom Base */}
-      <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className="hidden md:block absolute inset-0 z-0 pointer-events-none select-none"
-      >
-        <div className="h-full w-full opacity-[0.18] brightness-90">
-          <img
-            src={heroSrc}
-            alt="Carry Theory curated essentials showcase"
-            referrerPolicy="no-referrer"
-            className="h-full w-full object-contain lg:object-cover object-center"
-          />
-        </div>
-        <div className="absolute inset-0 bg-[#0B0B0B]/55" />
-      </motion.div>
-
-      {/* Desktop Layer 2: Medium-Size Mouse-Following Flashlight Reveal */}
-      <div
-        ref={revealRef}
-        aria-hidden="true"
-        className="hero-flashlight-reveal hidden md:block absolute inset-0 z-[1] pointer-events-none select-none"
-      >
+      {/* Desktop Hero Base Image (Universal radial-gradient overlay — fully compatible with Mac & iPad Safari) */}
+      <div className="hidden md:block absolute inset-0 z-0 pointer-events-none select-none">
         <img
           src={heroSrc}
-          alt=""
-          referrerPolicy="no-referrer"
-          className="h-full w-full object-contain lg:object-cover object-center brightness-[1.12] contrast-[1.05] saturate-[1.04]"
+          alt="Carry Theory curated essentials showcase"
+          className="h-full w-full object-contain lg:object-cover object-center brightness-[1.08] contrast-[1.04]"
         />
       </div>
 
-      {/* Desktop Layer 3: Protective Contrast Scrim Above Flashlight & Below Headline Text */}
+      {/* Desktop Interactive Flashlight Vignette Overlay */}
+      <div
+        ref={overlayRef}
+        aria-hidden="true"
+        className="hidden md:block absolute inset-0 z-[2] pointer-events-none select-none"
+        style={{
+          background:
+            'radial-gradient(circle 225px at 56% 48%, rgba(11,11,11,0) 0%, rgba(11,11,11,0.14) 34%, rgba(11,11,11,0.66) 66%, rgba(11,11,11,0.88) 100%)',
+        }}
+      />
+
+      {/* Desktop Protective Contrast Scrim Behind Headline Text */}
       <div
         aria-hidden="true"
         className="hidden md:block absolute inset-0 z-[5] pointer-events-none"
@@ -159,21 +165,21 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
       {/* Hero Typography & Actions (Below Image on Mobile, Lower-Left Overlay on Desktop) */}
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 pt-4 pb-6 md:px-8 md:pt-28 md:pb-14 lg:px-12 lg:pb-16">
         <motion.div
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+          initial={prefersReducedMotion ? false : { opacity: 1, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-xl"
         >
-          <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A] mb-1.5 sm:mb-3 md:drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)]">
+          <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A] mb-1.5 sm:mb-3">
             {siteConfig.brandName}
           </p>
 
-          <h1 className="font-display text-2xl sm:text-4xl lg:text-[2.85rem] font-semibold uppercase tracking-[-0.02em] leading-[1.08] text-[#F5F3EF] md:drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
+          <h1 className="font-display text-2xl sm:text-4xl lg:text-[2.85rem] font-semibold uppercase tracking-[-0.02em] leading-[1.08] text-[#F5F3EF]">
             <span className="block">{siteConfig.heroHeadingLine1}</span>
             <span className="block mt-0.5 sm:mt-1 text-[#F5F3EF]">{siteConfig.heroHeadingLine2}</span>
           </h1>
 
-          <p className="mt-2.5 sm:mt-4 max-w-md text-xs sm:text-sm leading-relaxed text-[#F5F3EF]/82 md:text-[#F5F3EF]/88 md:drop-shadow-[0_1px_10px_rgba(0,0,0,0.95)]">
+          <p className="mt-2.5 sm:mt-4 max-w-md text-xs sm:text-sm leading-relaxed text-[#F5F3EF]/85">
             {siteConfig.heroSubheading}
           </p>
 
@@ -187,7 +193,7 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
 
             <Link
               to="/about"
-              className="inline-flex items-center justify-center border border-[#F5F3EF]/70 bg-[#0B0B0B]/70 backdrop-blur-xs px-4 py-2.5 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-medium uppercase tracking-[0.18em] sm:tracking-[0.2em] text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors duration-200 whitespace-nowrap shrink-0"
+              className="inline-flex items-center justify-center border border-[#F5F3EF]/70 bg-[#0B0B0B]/70 px-4 py-2.5 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-medium uppercase tracking-[0.18em] sm:tracking-[0.2em] text-[#F5F3EF] hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors duration-200 whitespace-nowrap shrink-0"
             >
               {siteConfig.heroSecondaryCta}
             </Link>

@@ -42,7 +42,7 @@ interface StoreContextValue {
 }
 
 const CART_STORAGE_KEY = 'carry_theory_cart_v1';
-const LOCAL_STOCK_STORAGE_KEY = 'carry_theory_local_stock_v1';
+const LOCAL_STOCK_STORAGE_KEY = 'carry_theory_local_stock_v2';
 
 const StoreContext = createContext<StoreContextValue | null>(null);
 
