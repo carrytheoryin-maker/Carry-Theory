@@ -16,6 +16,7 @@ import { SafeImage } from '../components/SafeImage';
 import { useStore } from '../context/StoreContext';
 import { usePageSeo } from '../utils/format';
 import { syncSubscriberToGoogleSheet } from '../utils/googleSheetsWebhook';
+import { isValidEmail, sanitizeText } from '../utils/sanitize';
 
 const PILLAR_ICONS = {
   shield: ShieldCheck,
@@ -84,8 +85,14 @@ export function HomePage() {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedEmail = newsletterEmail.trim();
-    if (!trimmedEmail) return;
+    const trimmedEmail = sanitizeText(newsletterEmail, 180).toLowerCase();
+    if (!isValidEmail(trimmedEmail)) {
+      setNewsletterStatus({
+        type: 'error',
+        message: 'Please enter a valid email address.',
+      });
+      return;
+    }
     setNewsletterStatus({ type: 'submitting', message: '' });
     try {
       let res: Response | null = null;
@@ -105,8 +112,8 @@ export function HomePage() {
         try {
           const existing = JSON.parse(window.localStorage.getItem('carry_theory_subscribers_v1') || '[]');
           const next = Array.isArray(existing)
-            ? Array.from(new Set([...existing, trimmedEmail.toLowerCase()]))
-            : [trimmedEmail.toLowerCase()];
+            ? Array.from(new Set([...existing, trimmedEmail]))
+            : [trimmedEmail];
           window.localStorage.setItem('carry_theory_subscribers_v1', JSON.stringify(next));
         } catch {
           // Ignore storage quota errors
@@ -123,7 +130,9 @@ export function HomePage() {
       if (!res.ok) {
         throw new Error(data.error || 'Could not subscribe at this moment.');
       }
-      await syncSubscriberToGoogleSheet(trimmedEmail);
+      if (!data.syncedServerSide) {
+        await syncSubscriberToGoogleSheet(trimmedEmail);
+      }
       setNewsletterStatus({
         type: 'success',
         message: data.message || 'Thank you for joining Carry Theory.',
@@ -189,8 +198,10 @@ export function HomePage() {
                   <SafeImage
                     src={cat.image}
                     alt={cat.name}
+                    loading={idx < 2 ? 'eager' : 'lazy'}
+                    fetchPriority={idx < 2 ? 'high' : 'auto'}
                     style={cat.imagePosition ? { objectPosition: cat.imagePosition } : undefined}
-                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                    className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/92 via-[#0B0B0B]/35 to-transparent transition-opacity duration-300 group-hover:opacity-90" />
 
@@ -296,8 +307,8 @@ export function HomePage() {
           </div>
 
           <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-            {displayProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {displayProducts.map((product, idx) => (
+              <ProductCard key={product.id} product={product} priority={idx < 4} />
             ))}
           </div>
         </div>
@@ -402,8 +413,12 @@ export function HomePage() {
         <div className="relative min-h-[520px] lg:min-h-[620px] flex items-center">
           <div className="absolute inset-0">
             <SafeImage
-              src={siteConfig.storyImage}
-              alt="Carry Theory lifestyle workspace scene"
+              src={
+                siteConfig.storyImage ||
+                siteConfig.heroImageUrl ||
+                '/assets/aistudio/Warm_Studio_Still_Life_with_Tumblers_and_Mugs_2d1e9d8f.png'
+              }
+              alt="Carry Theory collection cover showcase"
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/95 via-[#0B0B0B]/70 to-[#0B0B0B]/30" />
@@ -463,6 +478,7 @@ export function HomePage() {
               id="newsletter-email"
               type="email"
               required
+              maxLength={180}
               value={newsletterEmail}
               onChange={(e) => setNewsletterEmail(e.target.value)}
               placeholder="Enter your email address"

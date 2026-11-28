@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import type { SiteConfig } from '../types';
+import { toWebpAssetUrl } from '../utils/format';
 
 interface FlashlightHeroProps {
   siteConfig: SiteConfig;
@@ -106,22 +107,29 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
   const heroSrc =
     siteConfig.heroImageUrl ||
     '/assets/aistudio/Warm_Studio_Still_Life_with_Tumblers_and_Mugs_2d1e9d8f.png';
+  const heroWebpSrc = toWebpAssetUrl(heroSrc);
 
   return (
     <section
       ref={containerRef}
       aria-label="Carry Theory Showcase"
-      className="hero-desktop-height relative w-full overflow-hidden bg-[#0B0B0B] pt-[72px] md:pt-0 md:flex md:items-end"
+      className="hero-desktop-height relative w-full overflow-hidden bg-[#0B0B0B] pt-[108px] md:pt-0 md:flex md:items-end"
     >
       {/* Mobile Showcase Image: Full Uncropped Product View with No Flashlight */}
       <div className="md:hidden relative w-full bg-[#0B0B0B]">
-        <img
-          src={heroSrc}
-          alt="Carry Theory curated essentials showcase"
-          width={1920}
-          height={1080}
-          className="block w-full h-auto object-contain object-center"
-        />
+        <picture className="contents">
+          {heroWebpSrc && <source srcSet={heroWebpSrc} type="image/webp" />}
+          <img
+            src={heroSrc}
+            alt="Carry Theory curated essentials showcase"
+            width={1920}
+            height={1080}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            className="block w-full h-auto object-contain object-center"
+          />
+        </picture>
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#0B0B0B] to-transparent"
@@ -130,11 +138,17 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
 
       {/* Desktop Hero Base Image (Universal radial-gradient overlay — fully compatible with Mac & iPad Safari) */}
       <div className="hidden md:block absolute inset-0 z-0 pointer-events-none select-none">
-        <img
-          src={heroSrc}
-          alt="Carry Theory curated essentials showcase"
-          className="h-full w-full object-contain lg:object-cover object-center brightness-[1.08] contrast-[1.04]"
-        />
+        <picture className="contents">
+          {heroWebpSrc && <source srcSet={heroWebpSrc} type="image/webp" />}
+          <img
+            src={heroSrc}
+            alt="Carry Theory curated essentials showcase"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            className="h-full w-full object-contain lg:object-cover object-center brightness-[1.08] contrast-[1.04]"
+          />
+        </picture>
       </div>
 
       {/* Desktop Interactive Flashlight Vignette Overlay */}

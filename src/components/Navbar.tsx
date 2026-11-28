@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, Search, ShoppingBag, X } from 'lucide-react';
+import { Gift, Menu, Search, ShoppingBag, Snowflake, Truck, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { BrandLogo } from './BrandLogo';
 
@@ -60,17 +60,68 @@ export function Navbar() {
   };
 
   const solidHeader = !isHomepage || scrolled || mobileMenuOpen || searchOpen;
+  const freeDeliveryThreshold = siteConfig?.freeDeliveryThresholdInr ?? 599;
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          solidHeader
-            ? 'bg-[#0B0B0B]/95 backdrop-blur-md border-b border-[#F5F3EF]/10'
-            : 'bg-transparent border-b border-transparent'
-        }`}
-      >
-        <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-6 px-5 sm:px-8 lg:px-12">
+      <div className="fixed top-0 left-0 right-0 z-40">
+        {isHomepage && (
+          <Link
+            to="/shop"
+            aria-label={`Christmas Sale is Live — Free delivery on orders above ₹${freeDeliveryThreshold}`}
+            className="ct-marquee-wrapper relative block h-9 w-full overflow-hidden border-b border-[#C6A77A]/45 bg-gradient-to-r from-[#0D291C] via-[#7D1924] to-[#0D291C] text-[#F5F3EF] focus-visible:outline-offset-[-2px]"
+          >
+            {/* Subtle festive champagne gold shimmer top edge */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#E5C99B]/65 to-transparent"
+            />
+            <div className="ct-marquee-track h-full items-center">
+              {[0, 1].map((dupIdx) => (
+                <div
+                  key={dupIdx}
+                  aria-hidden={dupIdx === 1}
+                  className="flex shrink-0 items-center gap-7 sm:gap-10 pr-7 sm:pr-10 text-[11px] font-medium uppercase tracking-[0.2em] whitespace-nowrap"
+                >
+                  <span className="inline-flex items-center gap-2 text-[#F5E6C8]">
+                    <Snowflake className="h-3.5 w-3.5 text-[#E5C99B] shrink-0" strokeWidth={1.75} />
+                    <span>Christmas Sale is Live</span>
+                  </span>
+                  <span aria-hidden="true" className="text-[#C6A77A]/70">✦</span>
+                  <span className="inline-flex items-center gap-2 text-[#F5F3EF]">
+                    <Truck className="h-3.5 w-3.5 text-[#E5C99B] shrink-0" strokeWidth={1.75} />
+                    <span>Free Delivery Above ₹{freeDeliveryThreshold}</span>
+                  </span>
+                  <span aria-hidden="true" className="text-[#C6A77A]/70">✦</span>
+                  <span className="inline-flex items-center gap-2 text-[#F5E6C8]">
+                    <Gift className="h-3.5 w-3.5 text-[#E5C99B] shrink-0" strokeWidth={1.75} />
+                    <span>Holiday Gifting &amp; Customised Keepsakes</span>
+                  </span>
+                  <span aria-hidden="true" className="text-[#C6A77A]/70">✦</span>
+                  <span className="inline-flex items-center gap-2 text-[#F5F3EF]">
+                    <Snowflake className="h-3.5 w-3.5 text-[#E5C99B] shrink-0" strokeWidth={1.75} />
+                    <span>Christmas Sale is Live</span>
+                  </span>
+                  <span aria-hidden="true" className="text-[#C6A77A]/70">✦</span>
+                  <span className="inline-flex items-center gap-2 text-[#F5E6C8]">
+                    <Truck className="h-3.5 w-3.5 text-[#E5C99B] shrink-0" strokeWidth={1.75} />
+                    <span>Free Delivery on Orders Above ₹{freeDeliveryThreshold}</span>
+                  </span>
+                  <span aria-hidden="true" className="text-[#C6A77A]/70">✦</span>
+                </div>
+              ))}
+            </div>
+          </Link>
+        )}
+
+        <header
+          className={`transition-all duration-300 ${
+            solidHeader
+              ? 'bg-[#0B0B0B]/95 backdrop-blur-md border-b border-[#F5F3EF]/10'
+              : 'bg-transparent border-b border-transparent'
+          }`}
+        >
+          <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-6 px-5 sm:px-8 lg:px-12">
           {/* Left: Brand Logo */}
           <Link
             to="/"
@@ -177,7 +228,8 @@ export function Navbar() {
             </form>
           </div>
         )}
-      </header>
+        </header>
+      </div>
 
       {/* Mobile Full-Screen Menu */}
       {mobileMenuOpen && (
@@ -185,7 +237,9 @@ export function Navbar() {
           role="dialog"
           aria-modal="true"
           aria-label="Mobile Navigation"
-          className="fixed inset-0 z-30 bg-[#0B0B0B] pt-24 pb-10 px-6 flex flex-col justify-between lg:hidden overflow-y-auto"
+          className={`fixed inset-0 z-30 bg-[#0B0B0B] pb-10 px-6 flex flex-col justify-between lg:hidden overflow-y-auto ${
+            isHomepage ? 'pt-32' : 'pt-24'
+          }`}
         >
           <nav className="flex flex-col gap-1 border-t border-[#F5F3EF]/10 pt-6">
             {NAV_LINKS.map((item, idx) => (
@@ -203,8 +257,14 @@ export function Navbar() {
 
           <div className="pt-8 space-y-3 text-xs text-[#F5F3EF]/60">
             <p className="uppercase tracking-[0.22em] text-[#C6A77A]">For Every Form.</p>
-            <p>WhatsApp Concierge: {siteConfig?.whatsappNumber || '+91 9742597425'}</p>
-            <p>Instagram: {siteConfig?.instagramHandle || '@carrytheory.in'}</p>
+            <p>
+              WhatsApp Concierge:{' '}
+              {(siteConfig?.whatsappNumbers?.length
+                ? siteConfig.whatsappNumbers
+                : ['+91 9742597425', '+91 7300004000', '+91 9840439931']
+              ).join(' · ')}
+            </p>
+            <p>Instagram: {siteConfig?.instagramHandle || '@carrytheory.shop'}</p>
           </div>
         </div>
       )}

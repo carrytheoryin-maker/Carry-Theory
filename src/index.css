@@ -101,3 +101,33 @@
     transition: none;
   }
 }
+
+/* Christmas moving announcement banner */
+@keyframes ct-christmas-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.ct-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: ct-christmas-marquee 30s linear infinite;
+}
+
+.ct-marquee-wrapper:hover .ct-marquee-track,
+.ct-marquee-wrapper:focus-within .ct-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-marquee-track {
+    animation: none;
+    width: 100%;
+    justify-content: center;
+  }
+}

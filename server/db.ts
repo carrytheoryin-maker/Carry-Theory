@@ -16,7 +16,9 @@ import {
   DEFAULT_SITE_CONFIG,
 } from './seed.ts';
 
-const CURRENT_CATALOG_VERSION = 21;
+import type { AdminCredential } from './security.ts';
+
+const CURRENT_CATALOG_VERSION = 23;
 
 export interface DatabaseState {
   catalogVersion?: number;
@@ -28,6 +30,7 @@ export interface DatabaseState {
   orders: Order[];
   subscribers: Subscriber[];
   orderCounter: number;
+  adminCredential?: AdminCredential;
 }
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');
@@ -90,6 +93,7 @@ export function readDb(): DatabaseState {
       orders: Array.isArray(parsed.orders) ? parsed.orders : [],
       subscribers: Array.isArray(parsed.subscribers) ? parsed.subscribers : [],
       orderCounter: typeof parsed.orderCounter === 'number' ? parsed.orderCounter : 1000,
+      ...(parsed.adminCredential ? { adminCredential: parsed.adminCredential } : {}),
     };
 
     if (!isCatalogCurrent) {

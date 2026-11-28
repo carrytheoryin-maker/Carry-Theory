@@ -93,6 +93,7 @@ export interface SiteConfig {
   privacyPolicyText: string;
   termsText: string;
   whatsappNumber: string;
+  whatsappNumbers?: string[];
   instagramHandle: string;
   contactEmail: string;
   websiteDomain: string;

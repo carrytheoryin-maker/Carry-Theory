@@ -5,8 +5,10 @@ import { BrandLogo } from './BrandLogo';
 
 export function Footer() {
   const { siteConfig, categories } = useStore();
-  const whatsapp = siteConfig?.whatsappNumber || '+91 9742597425';
-  const instagram = siteConfig?.instagramHandle || '@carrytheory.in';
+  const whatsappNumbers = siteConfig?.whatsappNumbers?.length
+    ? siteConfig.whatsappNumbers
+    : ['+91 9742597425', '+91 7300004000', '+91 9840439931'];
+  const instagram = siteConfig?.instagramHandle || '@carrytheory.shop';
   const email = siteConfig?.contactEmail || 'carrytheoryin@gmail.com';
 
   return (
@@ -104,16 +106,18 @@ export function Footer() {
                   Instagram — {instagram}
                 </a>
               </li>
-              <li>
-                <a
-                  href={buildWhatsAppUrl(whatsapp, 'Hello Carry Theory, I would like to know more about your collection.')}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-[#C6A77A] transition-colors"
-                >
-                  WhatsApp — {whatsapp}
-                </a>
-              </li>
+              {whatsappNumbers.map((num) => (
+                <li key={num}>
+                  <a
+                    href={buildWhatsAppUrl(num, 'Hello Carry Theory, I would like to know more about your collection.')}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-[#C6A77A] transition-colors"
+                  >
+                    WhatsApp — {num}
+                  </a>
+                </li>
+              ))}
               <li>
                 <a
                   href={`mailto:${email}`}

@@ -1,14 +1,15 @@
-import type { CSSProperties } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShoppingBag, Sparkles } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import type { Product, ProductImage } from '../types';
-import { formatINR } from '../utils/format';
+import { formatINR, preloadImage } from '../utils/format';
 import { SafeImage } from './SafeImage';
 import { StarRating } from './StarRating';
 
 interface ProductCardProps {
   product: Product;
+  priority?: boolean;
 }
 
 function getCardImageStyle(image?: ProductImage): CSSProperties | undefined {
@@ -24,10 +25,16 @@ function getCardImageStyle(image?: ProductImage): CSSProperties | undefined {
   return Object.keys(style).length > 0 ? style : undefined;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, priority = false }: ProductCardProps) {
   const { addToCart } = useStore();
   const primaryImage = product.images[0];
   const alternateImage = product.images[1];
+
+  useEffect(() => {
+    if (alternateImage?.url) {
+      preloadImage(alternateImage.url);
+    }
+  }, [alternateImage?.url]);
 
   const defaultVariant =
     product.variants.find((v) => v.available && v.stock > 0) || product.variants[0];
@@ -47,37 +54,43 @@ export function ProductCard({ product }: ProductCardProps) {
     }, []);
 
   return (
-    <article className="group flex flex-col bg-[#121212] border border-[#F5F3EF]/10 hover:border-[#C6A77A]/45 transition-all duration-300">
+    <article
+      onMouseEnter={() => {
+        if (alternateImage?.url) preloadImage(alternateImage.url);
+      }}
+      className="group flex flex-col bg-[#121212] border border-[#F5F3EF]/10 hover:border-[#C6A77A]/45 transition-colors duration-200"
+    >
       {/* Image Frame */}
       <Link
         to={`/products/${product.slug}`}
         className="relative block aspect-[4/3] w-full overflow-hidden bg-[#161616]"
       >
-        <div
-          className={`h-full w-full transition-all duration-500 ease-out group-hover:scale-[1.04] ${
-            alternateImage?.url ? 'group-hover:opacity-0' : ''
-          }`}
-        >
+        <div className="h-full w-full transition-transform duration-200 ease-out group-hover:scale-[1.03]">
           <SafeImage
             src={primaryImage?.url || ''}
             alt={primaryImage?.alt || product.name}
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
             style={getCardImageStyle(primaryImage)}
             className="h-full w-full object-cover"
           />
         </div>
         {alternateImage?.url && (
-          <div className="absolute inset-0 h-full w-full opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-[1.04]">
-            <SafeImage
-              src={alternateImage.url}
-              alt={alternateImage.alt || product.name}
-              style={getCardImageStyle(alternateImage)}
-              className="h-full w-full object-cover"
-            />
+          <div className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 pointer-events-none">
+            <div className="h-full w-full transition-transform duration-200 ease-out group-hover:scale-[1.03]">
+              <SafeImage
+                src={alternateImage.url}
+                alt={alternateImage.alt || product.name}
+                loading="eager"
+                style={getCardImageStyle(alternateImage)}
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
         )}
 
         {/* Quick View Indicator on Desktop Hover */}
-        <span className="pointer-events-none hidden lg:inline-flex items-center gap-1.5 absolute bottom-3 right-3 bg-[#0B0B0B]/88 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-[#F5F3EF] opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 border border-[#C6A77A]/35">
+        <span className="pointer-events-none hidden lg:inline-flex items-center gap-1.5 absolute bottom-3 right-3 bg-[#0B0B0B]/88 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-[#F5F3EF] opacity-0 translate-y-1 transition-all duration-150 group-hover:opacity-100 group-hover:translate-y-0 border border-[#C6A77A]/35">
           View Details
           <ArrowRight className="h-3 w-3 text-[#C6A77A]" />
         </span>

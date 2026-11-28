@@ -3,6 +3,14 @@
 
 const NOTIFICATION_EMAIL = 'carrytheoryin@gmail.com';
 
+function safeCell(value) {
+  const str = String(value == null ? '' : value).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+  if (/^[=+\-@\t\r]/.test(str)) {
+    return "'" + str;
+  }
+  return str;
+}
+
 function getOrCreateSheet(ss, sheetName, headers) {
   let sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
@@ -47,24 +55,24 @@ function doPost(e) {
       ]);
 
       sheet.appendRow([
-        timestamp,
-        data.orderNumber || '',
-        data.customerName || '',
-        data.email || '',
-        data.phone || '',
-        data.address || '',
-        data.city || '',
-        data.state || '',
-        data.pinCode || '',
-        data.itemsSummary || '',
-        data.subtotal || 0,
-        data.customisationRequested || 'No',
-        data.customisationFee || 0,
-        data.deliveryCharges || 0,
-        data.total || 0,
-        data.paymentMode || '',
-        data.paymentStatus || '',
-        data.upiTransactionRef || '',
+        safeCell(timestamp),
+        safeCell(data.orderNumber || ''),
+        safeCell(data.customerName || ''),
+        safeCell(data.email || ''),
+        safeCell(data.phone || ''),
+        safeCell(data.address || ''),
+        safeCell(data.city || ''),
+        safeCell(data.state || ''),
+        safeCell(data.pinCode || ''),
+        safeCell(data.itemsSummary || ''),
+        Number(data.subtotal) || 0,
+        safeCell(data.customisationRequested || 'No'),
+        Number(data.customisationFee) || 0,
+        Number(data.deliveryCharges) || 0,
+        Number(data.total) || 0,
+        safeCell(data.paymentMode || ''),
+        safeCell(data.paymentStatus || ''),
+        safeCell(data.upiTransactionRef || ''),
       ]);
 
       MailApp.sendEmail({
@@ -88,7 +96,7 @@ function doPost(e) {
       const sheet = getOrCreateSheet(ss, 'Newsletter', ['Timestamp', 'Email']);
       const email = String(data.email || '').trim().toLowerCase();
       if (email) {
-        sheet.appendRow([timestamp, email]);
+        sheet.appendRow([safeCell(timestamp), safeCell(email)]);
         MailApp.sendEmail({
           to: NOTIFICATION_EMAIL,
           subject: 'New Carry Theory Newsletter Subscriber',
@@ -108,14 +116,14 @@ function doPost(e) {
       ]);
 
       sheet.appendRow([
-        timestamp,
-        data.enquiryType || 'contact',
-        data.fullName || '',
-        data.email || '',
-        data.phone || '',
-        data.productInterest || '',
-        data.customisationRequirements || '',
-        data.message || '',
+        safeCell(timestamp),
+        safeCell(data.enquiryType || 'contact'),
+        safeCell(data.fullName || ''),
+        safeCell(data.email || ''),
+        safeCell(data.phone || ''),
+        safeCell(data.productInterest || ''),
+        safeCell(data.customisationRequirements || ''),
+        safeCell(data.message || ''),
       ]);
 
       MailApp.sendEmail({

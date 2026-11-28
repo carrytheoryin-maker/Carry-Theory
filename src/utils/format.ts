@@ -13,8 +13,28 @@ export function formatINR(amount: number): string {
 }
 
 export function buildWhatsAppUrl(phone: string, message: string): string {
-  const digits = phone.replace(/[^0-9]/g, '');
+  const digits = phone.replace(/[^0-9]/g, '').slice(0, 15);
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+}
+
+export function toWebpAssetUrl(url?: string | null): string | null {
+  if (!url || typeof url !== 'string') return null;
+  if (!url.startsWith('/assets/aistudio/') || !/\.(png|jpe?g)$/i.test(url)) {
+    return null;
+  }
+  return url.replace(/\.(png|jpe?g)$/i, '.webp');
+}
+
+const preloadedImages = new Set<string>();
+
+export function preloadImage(url?: string | null): void {
+  if (typeof window === 'undefined' || !url) return;
+  const preferredUrl = toWebpAssetUrl(url) || url;
+  if (preloadedImages.has(preferredUrl)) return;
+  preloadedImages.add(preferredUrl);
+  const img = new Image();
+  img.decoding = 'async';
+  img.src = preferredUrl;
 }
 
 export function usePageSeo(options: {
@@ -22,6 +42,7 @@ export function usePageSeo(options: {
   description: string;
   canonicalPath?: string;
   ogImage?: string;
+  noIndex?: boolean;
   structuredData?: Record<string, unknown> | null;
 }) {
   useEffect(() => {
@@ -46,6 +67,11 @@ export function usePageSeo(options: {
     setMeta('meta[property="og:description"]', 'content', options.description);
     setMeta('meta[name="twitter:title"]', 'content', options.title);
     setMeta('meta[name="twitter:description"]', 'content', options.description);
+    setMeta(
+      'meta[name="robots"]',
+      'content',
+      options.noIndex ? 'noindex, nofollow' : 'index, follow'
+    );
 
     const canonicalHref = `${window.location.origin}${options.canonicalPath ?? window.location.pathname}`;
     setMeta('meta[property="og:url"]', 'content', canonicalHref);
@@ -84,5 +110,12 @@ export function usePageSeo(options: {
       const el = document.getElementById('ct-dynamic-jsonld');
       if (el) el.remove();
     };
-  }, [options.title, options.description, options.canonicalPath, options.ogImage, options.structuredData]);
+  }, [
+    options.title,
+    options.description,
+    options.canonicalPath,
+    options.ogImage,
+    options.noIndex,
+    options.structuredData,
+  ]);
 }

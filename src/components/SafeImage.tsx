@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { toWebpAssetUrl } from '../utils/format';
+import { isSafeUrl } from '../utils/sanitize';
 
 export interface ImageDimensions {
   width: number;
@@ -12,6 +14,8 @@ interface SafeImageProps {
   className?: string;
   style?: React.CSSProperties;
   loading?: 'lazy' | 'eager';
+  decoding?: 'async' | 'sync' | 'auto';
+  fetchPriority?: 'high' | 'low' | 'auto';
   fallbackLabel?: string;
   fitMode?: 'cover' | 'contain' | 'auto';
   targetRatio?: number;
@@ -24,6 +28,8 @@ export function SafeImage({
   className = 'w-full h-full object-cover',
   style,
   loading = 'lazy',
+  decoding = 'async',
+  fetchPriority,
   fallbackLabel,
   fitMode,
   targetRatio = 4 / 3,
@@ -66,7 +72,10 @@ export function SafeImage({
     }
   }, [src]);
 
-  if (!src || failed) {
+  const safeSrc = isSafeUrl(src, false) ? src : undefined;
+  const webpSrc = toWebpAssetUrl(safeSrc);
+
+  if (!safeSrc || failed) {
     return (
       <div
         role="img"
@@ -88,16 +97,29 @@ export function SafeImage({
         }`.trim()
       : className;
 
-  return (
+  const imgElement = (
     <img
       ref={imgRef}
-      src={src}
+      src={safeSrc}
       alt={alt}
       loading={loading}
+      decoding={decoding}
+      fetchPriority={fetchPriority}
       style={style}
       onLoad={(e) => handleMeasure(e.currentTarget)}
       onError={() => setFailed(true)}
       className={resolvedClassName}
     />
   );
+
+  if (webpSrc) {
+    return (
+      <picture className="contents">
+        <source srcSet={webpSrc} type="image/webp" />
+        {imgElement}
+      </picture>
+    );
+  }
+
+  return imgElement;
 }

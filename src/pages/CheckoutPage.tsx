@@ -6,6 +6,13 @@ import { useStore } from '../context/StoreContext';
 import type { Order } from '../types';
 import { formatINR, usePageSeo } from '../utils/format';
 import { syncOrderToGoogleSheet } from '../utils/googleSheetsWebhook';
+import {
+  isValidEmail,
+  isValidPhone,
+  isValidPinCode,
+  sanitizeMultilineText,
+  sanitizeText,
+} from '../utils/sanitize';
 
 export function CheckoutPage() {
   const {
@@ -41,18 +48,23 @@ export function CheckoutPage() {
     canonicalPath: '/checkout',
   });
 
-  const hasCustomisableItem = useMemo(() => {
-    return cart.some((item) => {
-      if (typeof item.customisable === 'boolean') return item.customisable;
-      const liveProduct = products.find((p) => p.id === item.productId);
-      return Boolean(liveProduct?.customisable);
-    });
+  const customisableUnits = useMemo(() => {
+    return cart.reduce((sum, item) => {
+      const isCustomisable =
+        typeof item.customisable === 'boolean'
+          ? item.customisable
+          : Boolean(products.find((p) => p.id === item.productId)?.customisable);
+      return isCustomisable ? sum + item.quantity : sum;
+    }, 0);
   }, [cart, products]);
+
+  const hasCustomisableItem = customisableUnits > 0;
 
   const fee = siteConfig?.deliveryFeeInr ?? 99;
   const threshold = siteConfig?.freeDeliveryThresholdInr ?? 599;
   const customFeeRate = siteConfig?.customisationFeeInr ?? 50;
-  const customisationCharges = hasCustomisableItem && wantsCustomisation ? customFeeRate : 0;
+  const totalCustomisationAmount = customFeeRate * customisableUnits;
+  const customisationCharges = hasCustomisableItem && wantsCustomisation ? totalCustomisationAmount : 0;
   const deliveryCharges = cartSubtotal === 0 || cartSubtotal >= threshold ? 0 : fee;
   const finalTotal = cartSubtotal + customisationCharges + deliveryCharges;
 
@@ -69,18 +81,18 @@ export function CheckoutPage() {
     }
   };
 
-  const buildLocalOrder = (): Order => {
+  const buildLocalOrder = (cleanForm: typeof form, cleanUpiRef: string): Order => {
     const customRequested = hasCustomisableItem && wantsCustomisation;
     const localOrder: Order = {
       id: `ord-${Date.now()}`,
       orderNumber: `CT-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      customerName: form.customerName.trim(),
-      email: form.email.trim(),
-      phone: form.phone.trim(),
-      address: form.address.trim(),
-      city: form.city.trim(),
-      state: form.state.trim(),
-      pinCode: form.pinCode.trim(),
+      customerName: cleanForm.customerName,
+      email: cleanForm.email,
+      phone: cleanForm.phone,
+      address: cleanForm.address,
+      city: cleanForm.city,
+      state: cleanForm.state,
+      pinCode: cleanForm.pinCode,
       items: cart.map((item) => ({
         productId: item.productId,
         productName: item.name,
@@ -93,12 +105,12 @@ export function CheckoutPage() {
       })),
       subtotal: cartSubtotal,
       customisationRequested: customRequested,
-      customisationFee: customRequested ? customFeeRate : 0,
+      customisationFee: customRequested ? totalCustomisationAmount : 0,
       deliveryCharges,
       total: finalTotal,
       paymentMode,
       paymentStatus: paymentMode === 'cod' ? 'cod_pending' : 'upi_pending_verification',
-      upiTransactionRef: paymentMode === 'upi' ? upiTransactionRef.trim() || undefined : undefined,
+      upiTransactionRef: paymentMode === 'upi' ? cleanUpiRef || undefined : undefined,
       fulfilmentStatus: 'pending',
       createdAt: new Date().toISOString(),
     };
@@ -115,6 +127,36 @@ export function CheckoutPage() {
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
+
+    const cleanForm = {
+      customerName: sanitizeText(form.customerName, 140),
+      email: sanitizeText(form.email, 180).toLowerCase(),
+      phone: sanitizeText(form.phone, 25),
+      address: sanitizeMultilineText(form.address, 400),
+      city: sanitizeText(form.city, 120),
+      state: sanitizeText(form.state, 120),
+      pinCode: sanitizeText(form.pinCode, 10),
+    };
+    const cleanUpiRef = paymentMode === 'upi' ? sanitizeText(upiTransactionRef, 80) : '';
+
+    if (
+      !cleanForm.customerName ||
+      !isValidEmail(cleanForm.email) ||
+      !isValidPhone(cleanForm.phone) ||
+      !cleanForm.address ||
+      !cleanForm.city ||
+      !cleanForm.state ||
+      !isValidPinCode(cleanForm.pinCode)
+    ) {
+      setError('Please enter valid shipping details including a valid email, phone number, and 6-digit PIN code.');
+      return;
+    }
+
+    if (cleanUpiRef && !/^[a-zA-Z0-9._:/-]{4,80}$/.test(cleanUpiRef)) {
+      setError('Please enter a valid UPI transaction reference.');
+      return;
+    }
+
     setSubmitting(true);
     setError('');
 
@@ -131,10 +173,10 @@ export function CheckoutPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            ...form,
+            ...cleanForm,
             customisationRequested: hasCustomisableItem && wantsCustomisation,
             paymentMode,
-            upiTransactionRef: paymentMode === 'upi' ? upiTransactionRef.trim() : '',
+            upiTransactionRef: cleanUpiRef,
             items: orderItemsPayload,
           }),
         });
@@ -144,7 +186,7 @@ export function CheckoutPage() {
 
       const contentType = res?.headers.get('content-type') || '';
       if (!res || res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
-        const localOrder = buildLocalOrder();
+        const localOrder = buildLocalOrder(cleanForm, cleanUpiRef);
         await syncOrderToGoogleSheet(localOrder);
         decrementLocalStock(orderItemsPayload);
         clearCart();
@@ -158,7 +200,9 @@ export function CheckoutPage() {
       }
 
       const confirmed = data.order as Order;
-      await syncOrderToGoogleSheet(confirmed);
+      if (!data.syncedServerSide) {
+        await syncOrderToGoogleSheet(confirmed);
+      }
       clearCart();
       await refreshStorefront();
       setConfirmedOrder(confirmed);
@@ -307,6 +351,7 @@ export function CheckoutPage() {
                   <input
                     required
                     type="text"
+                    maxLength={140}
                     value={form.customerName}
                     onChange={(e) => setForm({ ...form, customerName: e.target.value })}
                     className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -319,6 +364,7 @@ export function CheckoutPage() {
                     <input
                       required
                       type="email"
+                      maxLength={180}
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -330,6 +376,7 @@ export function CheckoutPage() {
                     <input
                       required
                       type="tel"
+                      maxLength={25}
                       placeholder="+91 98XXXXXXXX"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -345,6 +392,7 @@ export function CheckoutPage() {
                   <textarea
                     required
                     rows={2}
+                    maxLength={400}
                     value={form.address}
                     onChange={(e) => setForm({ ...form, address: e.target.value })}
                     className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -357,6 +405,7 @@ export function CheckoutPage() {
                     <input
                       required
                       type="text"
+                      maxLength={120}
                       value={form.city}
                       onChange={(e) => setForm({ ...form, city: e.target.value })}
                       className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -368,6 +417,7 @@ export function CheckoutPage() {
                     <input
                       required
                       type="text"
+                      maxLength={120}
                       value={form.state}
                       onChange={(e) => setForm({ ...form, state: e.target.value })}
                       className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -390,7 +440,7 @@ export function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Optional Customisation (+₹50 shown only at checkout) */}
+              {/* Optional Customisation (₹50 per customisable product, shown only at checkout) */}
               {hasCustomisableItem && (
                 <div className="border-t border-[#F5F3EF]/12 pt-6 space-y-4">
                   <div className="flex items-center justify-between gap-3">
@@ -401,13 +451,15 @@ export function CheckoutPage() {
                       </h2>
                     </div>
                     <span className="tabular-nums text-xs font-semibold uppercase tracking-[0.14em] text-[#C6A77A]">
-                      +{formatINR(customFeeRate)}
+                      +{formatINR(totalCustomisationAmount)}
                     </span>
                   </div>
 
                   <p className="text-xs text-[#F5F3EF]/65">
-                    Customisation costs an additional{' '}
-                    <strong className="text-[#F5F3EF]">{formatINR(customFeeRate)}</strong>. If selected, our team will contact you regarding customisation after your order is placed.
+                    Customisation costs{' '}
+                    <strong className="text-[#F5F3EF]">{formatINR(customFeeRate)} per product</strong>{' '}
+                    ({customisableUnits} customisable {customisableUnits === 1 ? 'item' : 'items'} in your bag ={' '}
+                    <strong className="tabular-nums text-[#C6A77A]">{formatINR(totalCustomisationAmount)}</strong>). If selected, our team will contact you regarding customisation after your order is placed.
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -445,11 +497,11 @@ export function CheckoutPage() {
                           Yes, Add Customisation
                         </p>
                         <span className="tabular-nums text-xs font-semibold text-[#C6A77A]">
-                          +{formatINR(customFeeRate)}
+                          +{formatINR(totalCustomisationAmount)}
                         </span>
                       </div>
                       <p className="mt-1 text-xs text-[#F5F3EF]/65">
-                        Adds ₹{customFeeRate} to your final bill.
+                        Adds {formatINR(totalCustomisationAmount)} ({formatINR(customFeeRate)} × {customisableUnits}) to your final bill.
                       </p>
                     </button>
                   </div>
@@ -617,7 +669,10 @@ export function CheckoutPage() {
                 </div>
                 {hasCustomisableItem && (
                   <div className="flex items-center justify-between text-[#F5F3EF]/75">
-                    <span>Customisation</span>
+                    <span>
+                      Customisation
+                      {customisationCharges > 0 ? ` (${customisableUnits} × ${formatINR(customFeeRate)})` : ''}
+                    </span>
                     <span className="tabular-nums text-[#C6A77A]">
                       {customisationCharges > 0 ? `+${formatINR(customisationCharges)}` : 'Not selected (₹0)'}
                     </span>

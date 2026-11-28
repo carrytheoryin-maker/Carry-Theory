@@ -8,9 +8,9 @@ export function AboutPage() {
   const { siteConfig } = useStore();
 
   usePageSeo({
-    title: 'About Carry Theory — For Every Form',
+    title: 'About Us — Carry Theory',
     description:
-      'Discover the story and design philosophy behind Carry Theory—everyday essentials built around refined materiality, functionality, and quiet permanence.',
+      'Everyday essentials, thoughtfully designed for every form of life. Founded by Kanishk, Pranav, Sayam, and Neel and backed by the Institute of Venture Building (IVB).',
     canonicalPath: '/about',
   });
 
@@ -25,14 +25,18 @@ export function AboutPage() {
             FOR EVERY FORM.
           </h1>
           <p className="mt-5 font-editorial text-2xl sm:text-3xl italic text-[#F5F3EF]/85 leading-snug">
-            “At Carry Theory, we believe the objects you reach for daily should feel calm, enduring, and effortlessly considered.”
+            “Everyday essentials, thoughtfully designed for every form of life.”
           </p>
         </div>
 
         <div className="mt-12 overflow-hidden border border-[#F5F3EF]/12 aspect-[16/9] max-h-[560px]">
           <SafeImage
-            src={siteConfig?.storyImage || '/src/assets/images/editorial_brand_story_1795586434801.jpg'}
-            alt="Carry Theory studio workspace"
+            src={
+              siteConfig?.storyImage ||
+              siteConfig?.heroImageUrl ||
+              '/assets/aistudio/Warm_Studio_Still_Life_with_Tumblers_and_Mugs_2d1e9d8f.png'
+            }
+            alt="Carry Theory collection cover showcase"
             loading="eager"
             className="h-full w-full object-cover"
           />
@@ -41,18 +45,18 @@ export function AboutPage() {
         <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-12 border-t border-[#F5F3EF]/12 pt-14">
           <div className="lg:col-span-5">
             <h2 className="font-display text-2xl font-semibold uppercase tracking-[0.02em]">
-              Designed Around Quiet Detail.
+              About Us
             </h2>
           </div>
           <div className="lg:col-span-7 space-y-5 text-sm sm:text-base leading-relaxed text-[#F5F3EF]/72">
             <p>
-              Carry Theory was created with a singular conviction: the essentials that accompany your mornings, commutes, and workspaces deserve the same architectural restraint as fine objects.
+              Carry Theory is a lifestyle brand built around a simple idea - everyday essentials should be functional, stylish, and accessible. From drinkware to smart accessories, we bring together products that combine practicality, quality, and thoughtful design.
             </p>
             <p>
-              From double-wall stainless tumblers and ergonomic travel mugs to matte ceramic coffee vessels, slim MagSafe wallets, and multifunctional desk clocks, every piece is shaped to eliminate visual noise while elevating tactile satisfaction.
+              Founded by Kanishk, Pranav, Sayam, and Neel, Carry Theory started with a shared passion for entrepreneurship and creating something of our own. What began as an idea has grown into a brand focused on delivering products that add value to people&apos;s everyday lives.
             </p>
             <p>
-              Whether chosen for your daily morning ritual or personalised at checkout as a thoughtful gift, Carry Theory brings consistency, utility, and timeless composure to every form.
+              Backed by the Institute of Venture Building (IVB), we are constantly learning, improving, and exploring new possibilities. Whether it&apos;s personal use, gifting, or customised corporate orders, our goal remains the same - to create products that fit seamlessly into different lifestyles.
             </p>
 
             <div className="pt-6 flex flex-wrap gap-4">

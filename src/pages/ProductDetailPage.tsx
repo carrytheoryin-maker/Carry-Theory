@@ -17,7 +17,7 @@ import { QuickEnquiryModal } from '../components/QuickEnquiryModal';
 import { SafeImage } from '../components/SafeImage';
 import { StarRating } from '../components/StarRating';
 import { useStore } from '../context/StoreContext';
-import { buildWhatsAppUrl, formatINR, usePageSeo } from '../utils/format';
+import { buildWhatsAppUrl, formatINR, preloadImage, usePageSeo } from '../utils/format';
 
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -78,6 +78,10 @@ export function ProductDetailPage() {
       if (idx >= 0) setActiveImageIndex(idx);
     }
   }, [activeVariant?.id, galleryImages]);
+
+  useEffect(() => {
+    galleryImages.forEach((img) => preloadImage(img.url));
+  }, [galleryImages]);
 
   const currentPrice = activeVariant ? activeVariant.price : product?.price || 0;
   const currentStock = activeVariant ? activeVariant.stock : product?.stock || 0;
@@ -258,7 +262,7 @@ export function ProductDetailPage() {
     },
     {
       id: 'replacement',
-      title: '7-Day Replacement Policy',
+      title: 'Replacement Policy',
       content: (
         <p className="text-sm leading-relaxed text-[#F5F3EF]/75">
           {product.replacementPolicy || siteConfig?.replacementPolicyText}

@@ -29,6 +29,7 @@ export default defineConfig(() => {
       },
     ],
     build: {
+      sourcemap: false,
       target: ['es2020', 'safari13.1', 'chrome90', 'firefox90'],
       cssTarget: ['safari13.1', 'chrome90', 'firefox90'],
     },

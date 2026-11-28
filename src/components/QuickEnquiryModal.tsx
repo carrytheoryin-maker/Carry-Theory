@@ -3,6 +3,12 @@ import { MessageCircle, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { buildWhatsAppUrl } from '../utils/format';
 import { syncEnquiryToGoogleSheet } from '../utils/googleSheetsWebhook';
+import {
+  isValidEmail,
+  isValidPhone,
+  sanitizeMultilineText,
+  sanitizeText,
+} from '../utils/sanitize';
 
 interface QuickEnquiryModalProps {
   open: boolean;
@@ -22,20 +28,34 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
 
   if (!open) return null;
 
-  const whatsapp = siteConfig?.whatsappNumber || '+91 9742597425';
+  const whatsappNumbers = siteConfig?.whatsappNumbers?.length
+    ? siteConfig.whatsappNumbers
+    : ['+91 9742597425', '+91 7300004000', '+91 9840439931'];
+  const whatsapp = whatsappNumbers[0];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanName = sanitizeText(fullName, 140);
+    const cleanEmail = sanitizeText(email, 180).toLowerCase();
+    const cleanPhone = sanitizeText(phone, 25);
+    const cleanReqs = sanitizeMultilineText(customisationRequirements, 1000);
+    const cleanProduct = sanitizeText(productName, 240);
+
+    if (!cleanName || !isValidEmail(cleanEmail) || !isValidPhone(cleanPhone)) {
+      setError('Please provide your full name, valid email address, and valid phone number.');
+      return;
+    }
+
     setSubmitting(true);
     setError('');
     const payload = {
       type: 'customisation' as const,
-      fullName,
-      email,
-      phone,
-      productInterest: productName,
-      customisationRequirements,
-      message: `Customisation enquiry for ${productName}`,
+      fullName: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      productInterest: cleanProduct,
+      customisationRequirements: cleanReqs,
+      message: `Customisation enquiry for ${cleanProduct}`,
     };
     try {
       let res: Response | null = null;
@@ -67,7 +87,9 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not submit enquiry.');
-      await syncEnquiryToGoogleSheet(payload);
+      if (!data.syncedServerSide) {
+        await syncEnquiryToGoogleSheet(payload);
+      }
       setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to send enquiry.');
@@ -108,7 +130,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
           Select the customisation option during checkout and our team will contact you regarding your customisation, or reach out below with any questions.
         </p>
 
-        <div className="mt-4">
+        <div className="mt-4 space-y-2">
           <a
             href={buildWhatsAppUrl(
               whatsapp,
@@ -121,6 +143,25 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
             <MessageCircle className="h-4 w-4" />
             <span>Chat on WhatsApp ({whatsapp})</span>
           </a>
+          {whatsappNumbers.length > 1 && (
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-[#F5F3EF]/60">
+              <span>Also on WhatsApp:</span>
+              {whatsappNumbers.slice(1).map((num) => (
+                <a
+                  key={num}
+                  href={buildWhatsAppUrl(
+                    num,
+                    `Hello Carry Theory, I have a question about customising ${productName}.`
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[#C6A77A] hover:underline"
+                >
+                  {num}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-[#F5F3EF]/40">
@@ -148,6 +189,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
               <input
                 required
                 type="text"
+                maxLength={140}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -159,6 +201,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
                 <input
                   required
                   type="email"
+                  maxLength={180}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -169,6 +212,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
                 <input
                   required
                   type="tel"
+                  maxLength={25}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -179,6 +223,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
               <span className="uppercase tracking-[0.16em] text-[#F5F3EF]/65">Your Question</span>
               <textarea
                 rows={3}
+                maxLength={1000}
                 placeholder="Any questions about customising this product..."
                 value={customisationRequirements}
                 onChange={(e) => setCustomisationRequirements(e.target.value)}

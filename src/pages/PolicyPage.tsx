@@ -11,13 +11,13 @@ export function PolicyPage() {
       title: 'Shipping Information',
       body:
         siteConfig?.shippingPolicyText ||
-        'Orders are dispatched within 24–48 business hours across India, with complimentary delivery on qualifying orders.',
+        'Orders are dispatched within 24–72 hours. Metro delivery takes 4–6 business days and pan-India delivery takes 5–8 days, with complimentary delivery above ₹599.',
     },
     replacement: {
-      title: '7-Day Replacement Policy',
+      title: 'Replacement Policy',
       body:
         siteConfig?.replacementPolicyText ||
-        'Carry Theory offers a 7-day replacement policy for damaged, defective, or transit-compromised deliveries.',
+        'No replacement for products unless seen explicitly physically damaged, within a return window of 2 days from the date of delivery. No replacement for customised products.',
     },
     privacy: {
       title: 'Privacy Policy',

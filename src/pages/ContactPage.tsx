@@ -3,6 +3,12 @@ import { Check, Instagram, Mail, MessageCircle } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { buildWhatsAppUrl, usePageSeo } from '../utils/format';
 import { syncEnquiryToGoogleSheet } from '../utils/googleSheetsWebhook';
+import {
+  isValidEmail,
+  isValidPhone,
+  sanitizeMultilineText,
+  sanitizeText,
+} from '../utils/sanitize';
 
 export function ContactPage() {
   const { siteConfig } = useStore();
@@ -23,24 +29,36 @@ export function ContactPage() {
     canonicalPath: '/contact',
   });
 
-  const whatsapp = siteConfig?.whatsappNumber || '+91 9742597425';
-  const instagram = siteConfig?.instagramHandle || '@carrytheory.in';
+  const whatsappNumbers = siteConfig?.whatsappNumbers?.length
+    ? siteConfig.whatsappNumbers
+    : ['+91 9742597425', '+91 7300004000', '+91 9840439931'];
+  const instagram = siteConfig?.instagramHandle || '@carrytheory.shop';
   const email = siteConfig?.contactEmail || 'carrytheoryin@gmail.com';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanFullName = sanitizeText(form.fullName, 140);
+    const cleanEmail = sanitizeText(form.email, 180).toLowerCase();
+    const cleanPhone = sanitizeText(form.phone, 25);
+    const cleanMessage = sanitizeMultilineText(form.message, 2000);
+
+    if (!cleanFullName || !isValidEmail(cleanEmail) || !isValidPhone(cleanPhone) || !cleanMessage) {
+      setError('Please enter your full name, valid email address, valid phone number, and message.');
+      return;
+    }
+
     setSubmitting(true);
     setError('');
     const payload = {
       type: 'contact' as const,
-      fullName: form.fullName,
+      fullName: cleanFullName,
       company: '',
-      email: form.email,
-      phone: form.phone,
+      email: cleanEmail,
+      phone: cleanPhone,
       productInterest: 'General Enquiry',
       estimatedQuantity: '',
       customisationRequirements: '',
-      message: form.message,
+      message: cleanMessage,
     };
     try {
       let res: Response | null = null;
@@ -72,7 +90,9 @@ export function ContactPage() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not send message.');
-      await syncEnquiryToGoogleSheet(payload);
+      if (!data.syncedServerSide) {
+        await syncEnquiryToGoogleSheet(payload);
+      }
       setSent(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to send message.');
@@ -98,21 +118,28 @@ export function ContactPage() {
 
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
           <div className="lg:col-span-5 space-y-6 border-t border-[#F5F3EF]/12 pt-8">
-            <a
-              href={buildWhatsAppUrl(whatsapp, 'Hello Carry Theory, I have a question.')}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-start gap-4 border border-[#F5F3EF]/12 bg-[#111111] p-6 hover:border-[#C6A77A]/60 transition-colors"
-            >
+            <div className="flex items-start gap-4 border border-[#F5F3EF]/12 bg-[#111111] p-6">
               <MessageCircle className="h-5 w-5 text-[#C6A77A] mt-0.5 shrink-0" />
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-xs uppercase tracking-[0.2em] text-[#C6A77A]">WhatsApp</p>
-                <p className="mt-1 text-base font-medium text-[#F5F3EF]">{whatsapp}</p>
-                <p className="mt-1 text-xs text-[#F5F3EF]/55">
+                <div className="mt-1.5 flex flex-col gap-1.5">
+                  {whatsappNumbers.map((num) => (
+                    <a
+                      key={num}
+                      href={buildWhatsAppUrl(num, 'Hello Carry Theory, I have a question.')}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-base font-medium text-[#F5F3EF] hover:text-[#C6A77A] transition-colors"
+                    >
+                      {num}
+                    </a>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs text-[#F5F3EF]/55">
                   Quickest for product questions and personalisation help.
                 </p>
               </div>
-            </a>
+            </div>
 
             <a
               href={`mailto:${email}`}
@@ -171,6 +198,7 @@ export function ContactPage() {
                   <input
                     required
                     type="text"
+                    maxLength={140}
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
                     className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -182,6 +210,7 @@ export function ContactPage() {
                     <input
                       required
                       type="email"
+                      maxLength={180}
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -192,6 +221,7 @@ export function ContactPage() {
                     <input
                       required
                       type="tel"
+                      maxLength={25}
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
@@ -203,6 +233,7 @@ export function ContactPage() {
                   <textarea
                     required
                     rows={5}
+                    maxLength={2000}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
