@@ -58,6 +58,7 @@ export interface Category {
   name: string;
   description: string;
   image: string;
+  imagePosition?: string;
   sortOrder: number;
 }
 

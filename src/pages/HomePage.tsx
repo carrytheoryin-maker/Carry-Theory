@@ -139,7 +139,80 @@ export function HomePage() {
       {/* 1. Signature Interactive Flashlight Hero */}
       <FlashlightHero siteConfig={siteConfig} />
 
-      {/* 2. Brand Positioning Section (Compact, 2 rows on mobile so products take priority) */}
+      {/* 2. Shop By Category (Explore the Collection) */}
+      <section
+        id="categories"
+        className="border-t border-[#F5F3EF]/10 bg-[#0E0E0E] py-12 sm:py-20 lg:py-24"
+      >
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A]">
+                Curated Forms
+              </p>
+              <h2 className="mt-2 sm:mt-3 font-display text-2xl sm:text-4xl font-semibold uppercase tracking-[-0.015em]">
+                EXPLORE THE COLLECTION.
+              </h2>
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[#F5F3EF]/65">
+                Essentials for every form of everyday living.
+              </p>
+            </div>
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[#C6A77A] hover:text-[#F5F3EF] transition-colors whitespace-nowrap shrink-0"
+            >
+              <span>View All Products</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-5 lg:gap-6">
+            {categories.map((cat, idx) => {
+              // Symmetrical 2x2 editorial grid for 4 categories, adaptable if more are added
+              const spanClass =
+                categories.length <= 4
+                  ? 'lg:col-span-6 aspect-[4/3] sm:aspect-[16/10]'
+                  : idx < 2
+                    ? 'lg:col-span-6 aspect-[4/3] sm:aspect-[16/10]'
+                    : idx < 5
+                      ? 'lg:col-span-4 aspect-[4/3]'
+                      : 'lg:col-span-6 aspect-[16/9]';
+              return (
+                <Link
+                  key={cat.id}
+                  to={`/collections/${cat.slug}`}
+                  className={`group block w-full relative overflow-hidden bg-[#151515] border border-[#F5F3EF]/10 hover:border-[#C6A77A]/50 transition-colors duration-300 ${spanClass}`}
+                >
+                  <SafeImage
+                    src={cat.image}
+                    alt={cat.name}
+                    style={cat.imagePosition ? { objectPosition: cat.imagePosition } : undefined}
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/92 via-[#0B0B0B]/35 to-transparent transition-opacity duration-300 group-hover:opacity-90" />
+
+                  <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-6 lg:p-7 flex items-end justify-between gap-2 sm:gap-4">
+                    <div>
+                      <span className="tabular-nums text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-[#C6A77A]">
+                        0{idx + 1}
+                      </span>
+                      <h3 className="mt-0.5 sm:mt-1 font-display text-sm sm:text-xl lg:text-2xl font-semibold text-[#F5F3EF]">
+                        {cat.name}
+                      </h3>
+                      <span className="mt-1 sm:mt-2 inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#F5F3EF]/75 group-hover:text-[#C6A77A] transition-colors">
+                        <span>Explore</span>
+                        <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Brand Positioning Section (Philosophy) */}
       <section
         id="brand-positioning"
         className="border-t border-[#F5F3EF]/10 bg-[#0B0B0B] py-7 sm:py-10 lg:py-12"
@@ -189,78 +262,6 @@ export function HomePage() {
                     {pillar.description}
                   </p>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Shop By Category */}
-      <section
-        id="categories"
-        className="border-t border-[#F5F3EF]/10 bg-[#0E0E0E] py-12 sm:py-20 lg:py-24"
-      >
-        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A]">
-                Curated Forms
-              </p>
-              <h2 className="mt-2 sm:mt-3 font-display text-2xl sm:text-4xl font-semibold uppercase tracking-[-0.015em]">
-                EXPLORE THE COLLECTION.
-              </h2>
-              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[#F5F3EF]/65">
-                Essentials for every form of everyday living.
-              </p>
-            </div>
-            <Link
-              to="/shop"
-              className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[#C6A77A] hover:text-[#F5F3EF] transition-colors whitespace-nowrap shrink-0"
-            >
-              <span>View All Products</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-5 lg:gap-6">
-            {categories.map((cat, idx) => {
-              // Symmetrical 2x2 editorial grid for 4 categories, adaptable if more are added
-              const spanClass =
-                categories.length <= 4
-                  ? 'lg:col-span-6 aspect-[4/3] sm:aspect-[16/10]'
-                  : idx < 2
-                    ? 'lg:col-span-6 aspect-[4/3] sm:aspect-[16/10]'
-                    : idx < 5
-                      ? 'lg:col-span-4 aspect-[4/3]'
-                      : 'lg:col-span-6 aspect-[16/9]';
-              return (
-                <Link
-                  key={cat.id}
-                  to={`/collections/${cat.slug}`}
-                  className={`group block w-full relative overflow-hidden bg-[#151515] border border-[#F5F3EF]/10 hover:border-[#C6A77A]/50 transition-colors duration-300 ${spanClass}`}
-                >
-                  <SafeImage
-                    src={cat.image}
-                    alt={cat.name}
-                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/92 via-[#0B0B0B]/35 to-transparent transition-opacity duration-300 group-hover:opacity-90" />
-
-                  <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-6 lg:p-7 flex items-end justify-between gap-2 sm:gap-4">
-                    <div>
-                      <span className="tabular-nums text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-[#C6A77A]">
-                        0{idx + 1}
-                      </span>
-                      <h3 className="mt-0.5 sm:mt-1 font-display text-sm sm:text-xl lg:text-2xl font-semibold text-[#F5F3EF]">
-                        {cat.name}
-                      </h3>
-                      <span className="mt-1 sm:mt-2 inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#F5F3EF]/75 group-hover:text-[#C6A77A] transition-colors">
-                        <span>Explore</span>
-                        <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
               );
             })}
           </div>

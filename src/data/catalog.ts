@@ -82,7 +82,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: 'Tumblers',
     description:
       'Insulated stainless steel tumblers in 900 ml and 1200 ml capacities engineered to keep beverages hot or cold for up to 12 hours.',
-    image: '/src/assets/images/product_tumbler_900_1795586429011.jpg',
+    image: '/assets/aistudio/file_00000000422481fab48b643828f9ecfc_881ce02e.png',
+    imagePosition: '50% 36%',
     sortOrder: 1,
   },
   {
@@ -91,7 +92,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: 'Travel Mugs',
     description:
       'Ergonomic insulated travel mugs and matte ceramic coffee vessels crafted for daily commutes, home desks, and quiet morning rituals.',
-    image: '/src/assets/images/product_corp_mug_grip_1795586431633.jpg',
+    image: '/assets/aistudio/DSC_5007_f05b20d9.JPG',
+    imagePosition: '50% 52%',
     sortOrder: 2,
   },
   {
@@ -100,7 +102,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: 'MagSafe Wallets',
     description:
       'Slim, minimalist magnetic card holders for MagSafe iPhones and Android devices using the included magnetic ring.',
-    image: '/src/assets/images/product_magsafe_wallet_1795586432223.jpg',
+    image: '/assets/aistudio/DSC_4880_ab7feb89.JPG',
+    imagePosition: '48% 50%',
     sortOrder: 3,
   },
   {
@@ -109,7 +112,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: 'Digital Products',
     description:
       'Smart minimalist desk and bedside essentials uniting clean aesthetics with integrated everyday functionality.',
-    image: '/src/assets/images/product_alarm_clock_1795586434306.jpg',
+    image: '/assets/aistudio/file_00000000cf0082088396de3981c18c4e_dcadf42f.png',
+    imagePosition: '50% 52%',
     sortOrder: 4,
   },
 ];
@@ -173,6 +177,10 @@ export const DEFAULT_PRODUCTS: Product[] = [
       {
         url: '/assets/aistudio/DSC_5069_6ff640a1.JPG',
         alt: 'Carry Theory Tumbler 900ml Black held in hand',
+      },
+      {
+        url: '/assets/aistudio/Customisation_Anywhere__Premium_Travel_Tumblers_ae425750.png',
+        alt: 'Customised Carry Theory Tumblers 900ml with laser engraving and UV sticker branding',
       },
       {
         url: '/assets/aistudio/Carry_Theory_Tumbler_Showcase_bca80374.png',
@@ -382,6 +390,10 @@ export const DEFAULT_PRODUCTS: Product[] = [
         alt: 'Carry Theory Travel Mug 380ml with lid next to 510ml mug',
       },
       {
+        url: '/assets/aistudio/Customised_Tumblers_with_Engraved_Logos_7a89e908.png',
+        alt: 'Customised Carry Theory White Travel Mugs 380ml with laser engraving and UV sticker branding',
+      },
+      {
         url: '/assets/aistudio/DSC_4922_6e9d6c23.JPG',
         alt: 'Carry Theory Travel Mug 380ml held in hand',
       },
@@ -466,6 +478,10 @@ export const DEFAULT_PRODUCTS: Product[] = [
       {
         url: '/assets/aistudio/file_000000000abc82088193c5791c007afc_648c8a76.png',
         alt: 'Carry Theory Logo on Blue Travel Mug 510ml held in hand',
+      },
+      {
+        url: '/assets/aistudio/Customised_Travel_Tumblers_Poster_5ec296e6.png',
+        alt: 'Customised Carry Theory Travel Mugs 510ml in Blue and White with laser engraving and UV stickers',
       },
       {
         url: '/assets/aistudio/DSC_4922_6e9d6c23.JPG',
@@ -818,46 +834,46 @@ export const DEFAULT_PRODUCTS: Product[] = [
 
 export const DEFAULT_REVIEWS: Review[] = [
   {
-    id: 'rev-sample-1',
-    customerName: 'Aarav Mehta (Sample Preview)',
+    id: 'rev-1',
+    customerName: 'Ambika Anant',
     rating: 5,
-    text: 'Sample testimonial for design preview: The 510 ml Travel Mug feels balanced and thoughtfully textured—it sits cleanly on my desk and keeps my morning coffee hot for hours.',
-    productName: 'Travel Mug (510ml)',
-    verifiedPurchase: false,
-    isSamplePreview: true,
+    text: 'Really love the blue colour and the quality feels great. The claims are actually true - it keeps drinks hot and cold for a long time.',
+    productName: 'Travel Mug (510ml) - Blue',
+    verifiedPurchase: true,
+    isSamplePreview: false,
     approved: true,
     createdAt: '2026-10-20T10:00:00.000Z',
   },
   {
-    id: 'rev-sample-2',
-    customerName: 'Naina Kapoor (Sample Preview)',
+    id: 'rev-2',
+    customerName: 'Amit',
     rating: 5,
-    text: 'Sample testimonial for design preview: Ordered the 900 ml Tumbler with custom personalisation—clean matte finish, crisp engraving, and zero condensation on the desk.',
-    productName: 'Tumbler (900ml)',
-    verifiedPurchase: false,
-    isSamplePreview: true,
+    text: 'Really useful for my desk! The wireless charging, clear LED display, adjustable brightness and alarm features are all super convenient, and I love how everything comes in one compact device.',
+    productName: 'Digital Focus Clock',
+    verifiedPurchase: true,
+    isSamplePreview: false,
     approved: true,
     createdAt: '2026-10-21T10:00:00.000Z',
   },
   {
-    id: 'rev-sample-3',
-    customerName: 'Rohan Deshmukh (Sample Preview)',
+    id: 'rev-3',
+    customerName: 'Aarav Jain',
     rating: 5,
-    text: 'Sample testimonial for design preview: The Digital Focus Clock clears cable clutter off my bedside table—clean LED numerals and convenient wireless charging.',
-    productName: 'Digital Focus Clock',
-    verifiedPurchase: false,
-    isSamplePreview: true,
+    text: 'Love how slim and lightweight it is! The magnetic attachment is really convenient, and the quality feels premium. Makes carrying my cards so much easier.',
+    productName: 'MagSafe Wallet',
+    verifiedPurchase: true,
+    isSamplePreview: false,
     approved: true,
     createdAt: '2026-10-22T10:00:00.000Z',
   },
   {
-    id: 'rev-sample-4',
-    customerName: 'Ananya Rao (Sample Preview)',
+    id: 'rev-4',
+    customerName: 'Kavith Shah',
     rating: 5,
-    text: 'Sample testimonial for design preview: The MagSafe Wallet snaps cleanly onto my phone and holds my daily cards without adding bulk.',
-    productName: 'MagSafe Wallet',
-    verifiedPurchase: false,
-    isSamplePreview: true,
+    text: 'The quality is genuinely impressive, and the leak-proof lid makes it so easy to carry around without worrying about spills. Got mine customised too, and it turned out exactly how I wanted!',
+    productName: 'Tumbler (900ml)',
+    verifiedPurchase: true,
+    isSamplePreview: false,
     approved: true,
     createdAt: '2026-10-23T10:00:00.000Z',
   },
