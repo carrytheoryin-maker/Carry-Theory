@@ -192,7 +192,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
                 maxLength={140}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
               />
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -204,7 +204,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
                   maxLength={180}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                  className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                 />
               </label>
               <label className="block text-xs">
@@ -215,7 +215,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
                   maxLength={25}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                  className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                 />
               </label>
             </div>
@@ -227,7 +227,7 @@ export function QuickEnquiryModal({ open, onClose, productName }: QuickEnquiryMo
                 placeholder="Any questions about customising this product..."
                 value={customisationRequirements}
                 onChange={(e) => setCustomisationRequirements(e.target.value)}
-                className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                className="mt-1.5 w-full bg-[#121212] border border-[#F5F3EF]/15 px-3.5 py-2.5 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
               />
             </label>
             <button

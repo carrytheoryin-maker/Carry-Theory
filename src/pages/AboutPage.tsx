@@ -15,7 +15,7 @@ export function AboutPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#0B0B0B] text-[#F5F3EF] pt-28 pb-24">
+    <main className="min-h-screen bg-[#0B0B0B] text-[#F5F3EF] pt-24 sm:pt-28 pb-16 sm:pb-24">
       <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="max-w-3xl">
           <p className="text-[11px] font-medium uppercase tracking-[0.26em] text-[#C6A77A]">
@@ -24,12 +24,12 @@ export function AboutPage() {
           <h1 className="mt-3 font-display text-3xl sm:text-5xl font-semibold uppercase tracking-[-0.015em]">
             FOR EVERY FORM.
           </h1>
-          <p className="mt-5 font-editorial text-2xl sm:text-3xl italic text-[#F5F3EF]/85 leading-snug">
+          <p className="mt-4 sm:mt-5 font-editorial text-xl sm:text-3xl italic text-[#F5F3EF]/85 leading-snug">
             “Everyday essentials, thoughtfully designed for every form of life.”
           </p>
         </div>
 
-        <div className="mt-12 overflow-hidden border border-[#F5F3EF]/12 aspect-[16/9] max-h-[560px]">
+        <div className="mt-8 sm:mt-12 overflow-hidden border border-[#F5F3EF]/12 aspect-[16/9] max-h-[560px]">
           <SafeImage
             src={
               siteConfig?.storyImage ||
@@ -42,7 +42,7 @@ export function AboutPage() {
           />
         </div>
 
-        <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-12 border-t border-[#F5F3EF]/12 pt-14">
+        <div className="mt-10 sm:mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 border-t border-[#F5F3EF]/12 pt-10 sm:pt-14">
           <div className="lg:col-span-5">
             <h2 className="font-display text-2xl font-semibold uppercase tracking-[0.02em]">
               About Us

@@ -201,7 +201,7 @@ export function ContactPage() {
                     maxLength={140}
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                    className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                    className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                   />
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -213,7 +213,7 @@ export function ContactPage() {
                       maxLength={180}
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                     />
                   </label>
                   <label className="block text-xs">
@@ -224,7 +224,7 @@ export function ContactPage() {
                       maxLength={25}
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                     />
                   </label>
                 </div>
@@ -236,7 +236,7 @@ export function ContactPage() {
                     maxLength={2000}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                    className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                   />
                 </label>
                 <button

@@ -146,7 +146,7 @@ export function FlashlightHero({ siteConfig }: FlashlightHeroProps) {
             loading="eager"
             decoding="async"
             fetchPriority="high"
-            className="h-full w-full object-contain lg:object-cover object-center brightness-[1.08] contrast-[1.04]"
+            className="h-full w-full object-cover object-center brightness-[1.08] contrast-[1.04]"
           />
         </picture>
       </div>

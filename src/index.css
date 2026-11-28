@@ -57,20 +57,20 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Cross-browser Hero Height with vh fallback for older iOS/macOS Safari */
+/* Cross-browser Hero Height balanced across tablets, laptops, and large displays */
 .hero-desktop-height {
   min-height: 100%;
 }
 @media (min-width: 768px) {
   .hero-desktop-height {
-    min-height: 92vh;
-    min-height: 92svh;
+    min-height: clamp(520px, 78vh, 760px);
+    min-height: clamp(520px, 78svh, 760px);
   }
 }
 @media (min-width: 1024px) {
   .hero-desktop-height {
-    min-height: 100vh;
-    min-height: 100svh;
+    min-height: clamp(600px, 94vh, 940px);
+    min-height: clamp(600px, 94svh, 940px);
   }
 }
 

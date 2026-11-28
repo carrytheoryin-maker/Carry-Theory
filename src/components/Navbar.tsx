@@ -81,7 +81,7 @@ export function Navbar() {
                 <div
                   key={dupIdx}
                   aria-hidden={dupIdx === 1}
-                  className="flex shrink-0 items-center gap-7 sm:gap-10 pr-7 sm:pr-10 text-[11px] font-medium uppercase tracking-[0.2em] whitespace-nowrap"
+                  className="flex shrink-0 items-center gap-5 sm:gap-10 pr-5 sm:pr-10 text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.16em] sm:tracking-[0.2em] whitespace-nowrap"
                 >
                   <span className="inline-flex items-center gap-2 text-[#F5E6C8]">
                     <Snowflake className="h-3.5 w-3.5 text-[#E5C99B] shrink-0" strokeWidth={1.75} />

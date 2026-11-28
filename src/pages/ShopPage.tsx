@@ -175,7 +175,7 @@ export function ShopPage() {
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search by product, size, or keyword..."
-              className="w-full bg-[#121212] border border-[#F5F3EF]/15 pl-10 pr-9 py-2.5 text-sm text-[#F5F3EF] placeholder:text-[#F5F3EF]/40 focus:border-[#C6A77A] focus:outline-none"
+              className="w-full bg-[#121212] border border-[#F5F3EF]/15 pl-10 pr-9 py-2.5 text-base sm:text-sm text-[#F5F3EF] placeholder:text-[#F5F3EF]/40 focus:border-[#C6A77A] focus:outline-none"
             />
             {searchTerm && (
               <button
@@ -239,7 +239,7 @@ export function ShopPage() {
 
         {/* Product Grid */}
         {loading ? (
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mt-12 grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="h-96 bg-[#121212] border border-[#F5F3EF]/10 animate-pulse" />
             ))}
@@ -261,7 +261,7 @@ export function ShopPage() {
             </button>
           </div>
         ) : (
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mt-10 grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
             {filteredProducts.map((product, idx) => (
               <ProductCard key={product.id} product={product} priority={idx < 4} />
             ))}

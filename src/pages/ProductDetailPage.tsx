@@ -304,7 +304,7 @@ export function ProductDetailPage() {
                 <div
                   onTouchStart={handleTouchStart}
                   onTouchEnd={handleTouchEnd}
-                  style={{ aspectRatio: String(displayRatio), maxHeight: '78vh' }}
+                  style={{ aspectRatio: String(displayRatio), maxHeight: 'min(74vh, 680px)' }}
                   className="relative w-full overflow-hidden bg-[#111111] border border-[#F5F3EF]/12 group flex items-center justify-center transition-[aspect-ratio] duration-300"
                 >
                   <div
@@ -501,17 +501,17 @@ export function ProductDetailPage() {
 
             {/* Quantity + Primary & Secondary CTAs */}
             <div className="space-y-3">
-              <div className="flex items-center gap-4">
-                <div className="inline-flex items-center border border-[#F5F3EF]/20 h-12">
+              <div className="flex items-center gap-2.5 sm:gap-4">
+                <div className="inline-flex items-center border border-[#F5F3EF]/20 h-12 shrink-0">
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                     aria-label="Decrease quantity"
-                    className="flex h-full w-11 items-center justify-center text-[#F5F3EF]/80 hover:text-[#C6A77A] cursor-pointer"
+                    className="flex h-full w-9 sm:w-11 items-center justify-center text-[#F5F3EF]/80 hover:text-[#C6A77A] cursor-pointer"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
-                  <span className="tabular-nums w-10 text-center text-sm font-medium">
+                  <span className="tabular-nums w-8 sm:w-10 text-center text-sm font-medium">
                     {quantity}
                   </span>
                   <button
@@ -519,7 +519,7 @@ export function ProductDetailPage() {
                     onClick={() => setQuantity((q) => Math.min(Math.max(1, currentStock), q + 1))}
                     aria-label="Increase quantity"
                     disabled={!isAvailable || quantity >= currentStock}
-                    className="flex h-full w-11 items-center justify-center text-[#F5F3EF]/80 hover:text-[#C6A77A] disabled:opacity-35 cursor-pointer"
+                    className="flex h-full w-9 sm:w-11 items-center justify-center text-[#F5F3EF]/80 hover:text-[#C6A77A] disabled:opacity-35 cursor-pointer"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
@@ -529,9 +529,9 @@ export function ProductDetailPage() {
                   type="button"
                   disabled={!isAvailable}
                   onClick={() => addToCart(product, activeVariant, quantity, true)}
-                  className="flex-1 h-12 inline-flex items-center justify-center gap-2.5 bg-[#F5F3EF] px-6 text-xs font-semibold uppercase tracking-[0.2em] text-[#0B0B0B] hover:bg-[#C6A77A] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap"
+                  className="flex-1 min-w-0 h-12 inline-flex items-center justify-center gap-2 sm:gap-2.5 bg-[#F5F3EF] px-3 sm:px-6 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#0B0B0B] hover:bg-[#C6A77A] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap"
                 >
-                  <ShoppingBag className="h-4 w-4" />
+                  <ShoppingBag className="h-4 w-4 shrink-0" />
                   <span>{isAvailable ? 'ADD TO CART' : 'OUT OF STOCK'}</span>
                 </button>
               </div>
@@ -606,7 +606,7 @@ export function ProductDetailPage() {
             <h2 className="mt-2 font-display text-2xl sm:text-3xl font-semibold uppercase tracking-[-0.01em]">
               YOU MAY ALSO LIKE.
             </h2>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="mt-10 grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
               {relatedProducts.map((item) => (
                 <ProductCard key={item.id} product={item} />
               ))}

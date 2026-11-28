@@ -178,7 +178,7 @@ export function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-5 lg:gap-6">
+          <div className="mt-8 sm:mt-12 grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-cols-12 gap-3.5 sm:gap-5 lg:gap-6">
             {categories.map((cat, idx) => {
               // Symmetrical 2x2 editorial grid for 4 categories, adaptable if more are added
               const spanClass =
@@ -252,7 +252,7 @@ export function HomePage() {
             </p>
           </motion.div>
 
-          <div className="mt-4 sm:mt-6 grid grid-cols-2 lg:grid-cols-4 border-t border-l border-[#F5F3EF]/12">
+          <div className="mt-4 sm:mt-6 grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-cols-4 border-t border-l border-[#F5F3EF]/12">
             {siteConfig.positioningPillars.map((pillar) => {
               const IconComponent = PILLAR_ICONS[pillar.iconName] || ShieldCheck;
               return (
@@ -306,7 +306,7 @@ export function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          <div className="mt-8 sm:mt-12 grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
             {displayProducts.map((product, idx) => (
               <ProductCard key={product.id} product={product} priority={idx < 4} />
             ))}
@@ -363,7 +363,7 @@ export function HomePage() {
               {reviews.map((review) => (
                 <article
                   key={review.id}
-                  className="snap-start shrink-0 w-[86vw] sm:w-[400px] lg:w-[420px] flex flex-col justify-between bg-[#101010] border border-[#F5F3EF]/12 p-7"
+                  className="snap-start shrink-0 w-[min(86vw,360px)] sm:w-[400px] lg:w-[420px] flex flex-col justify-between bg-[#101010] border border-[#F5F3EF]/12 p-5 sm:p-7"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-3">
@@ -410,7 +410,7 @@ export function HomePage() {
 
       {/* 7. Lifestyle / Brand Story Editorial Section */}
       <section className="relative border-t border-[#F5F3EF]/10 overflow-hidden bg-[#0B0B0B]">
-        <div className="relative min-h-[520px] lg:min-h-[620px] flex items-center">
+        <div className="relative min-h-[420px] sm:min-h-[520px] lg:min-h-[620px] flex items-center">
           <div className="absolute inset-0">
             <SafeImage
               src={
@@ -421,10 +421,10 @@ export function HomePage() {
               alt="Carry Theory collection cover showcase"
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/95 via-[#0B0B0B]/70 to-[#0B0B0B]/30" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/95 via-[#0B0B0B]/80 to-[#0B0B0B]/45 sm:bg-gradient-to-r sm:from-[#0B0B0B]/95 sm:via-[#0B0B0B]/70 sm:to-[#0B0B0B]/30" />
           </div>
 
-          <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12 py-20 sm:py-28">
+          <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12 py-14 sm:py-24 lg:py-28">
             <motion.div
               initial={false}
               whileInView={{ y: 0 }}

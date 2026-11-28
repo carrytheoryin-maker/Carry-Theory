@@ -354,7 +354,7 @@ export function CheckoutPage() {
                     maxLength={140}
                     value={form.customerName}
                     onChange={(e) => setForm({ ...form, customerName: e.target.value })}
-                    className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                    className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                   />
                 </label>
 
@@ -367,7 +367,7 @@ export function CheckoutPage() {
                       maxLength={180}
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                     />
                   </label>
 
@@ -380,7 +380,7 @@ export function CheckoutPage() {
                       placeholder="+91 98XXXXXXXX"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                     />
                   </label>
                 </div>
@@ -395,7 +395,7 @@ export function CheckoutPage() {
                     maxLength={400}
                     value={form.address}
                     onChange={(e) => setForm({ ...form, address: e.target.value })}
-                    className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                    className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                   />
                 </label>
 
@@ -408,7 +408,7 @@ export function CheckoutPage() {
                       maxLength={120}
                       value={form.city}
                       onChange={(e) => setForm({ ...form, city: e.target.value })}
-                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                     />
                   </label>
 
@@ -420,7 +420,7 @@ export function CheckoutPage() {
                       maxLength={120}
                       value={form.state}
                       onChange={(e) => setForm({ ...form, state: e.target.value })}
-                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
+                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] focus:border-[#C6A77A] focus:outline-none"
                     />
                   </label>
 
@@ -434,7 +434,7 @@ export function CheckoutPage() {
                       placeholder="6 digits"
                       value={form.pinCode}
                       onChange={(e) => setForm({ ...form, pinCode: e.target.value })}
-                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-sm text-[#F5F3EF] tabular-nums focus:border-[#C6A77A] focus:outline-none"
+                      className="mt-2 w-full bg-[#0B0B0B] border border-[#F5F3EF]/18 px-4 py-3 text-base sm:text-sm text-[#F5F3EF] tabular-nums focus:border-[#C6A77A] focus:outline-none"
                     />
                   </label>
                 </div>
@@ -569,11 +569,11 @@ export function CheckoutPage() {
                         <p className="text-[11px] uppercase tracking-[0.2em] text-[#C6A77A]">
                           Direct UPI Transfer Details
                         </p>
-                        <p className="mt-1.5 text-sm text-[#F5F3EF]">
+                        <p className="mt-1.5 text-base sm:text-sm text-[#F5F3EF]">
                           Account Holder Name:{' '}
                           <strong className="font-semibold">{accountHolderName}</strong>
                         </p>
-                        <p className="mt-1 text-sm text-[#F5F3EF]">
+                        <p className="mt-1 text-base sm:text-sm text-[#F5F3EF]">
                           UPI Mobile Number:{' '}
                           <strong className="tabular-nums font-semibold text-[#C6A77A]">
                             {upiPhoneNumber}
@@ -615,7 +615,7 @@ export function CheckoutPage() {
                         placeholder="e.g., 432819XXXXXX"
                         value={upiTransactionRef}
                         onChange={(e) => setUpiTransactionRef(e.target.value)}
-                        className="mt-2 w-full bg-[#121212] border border-[#F5F3EF]/18 px-4 py-2.5 text-sm text-[#F5F3EF] tabular-nums focus:border-[#C6A77A] focus:outline-none"
+                        className="mt-2 w-full bg-[#121212] border border-[#F5F3EF]/18 px-4 py-2.5 text-base sm:text-sm text-[#F5F3EF] tabular-nums focus:border-[#C6A77A] focus:outline-none"
                       />
                     </label>
                   </div>

@@ -97,7 +97,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       </Link>
 
       {/* Card Body */}
-      <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+      <div className="flex flex-1 flex-col justify-between p-4 sm:p-5 xl:p-6">
         <div>
           {/* Unboxed Metadata Line */}
           <div className="flex items-center justify-between gap-2 text-[11px] uppercase tracking-[0.2em]">
@@ -176,15 +176,15 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
               type="button"
               disabled={!isAvailable}
               onClick={() => addToCart(product, defaultVariant, 1, true)}
-              className="flex-1 inline-flex items-center justify-center gap-2 bg-[#F5F3EF] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0B0B0B] hover:bg-[#C6A77A] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap"
+              className="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-[#F5F3EF] px-3 sm:px-4 py-2.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] sm:tracking-[0.18em] text-[#0B0B0B] hover:bg-[#C6A77A] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap"
             >
-              <ShoppingBag className="h-3.5 w-3.5" strokeWidth={1.7} />
+              <ShoppingBag className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} />
               <span>{isAvailable ? 'Add to Cart' : 'Unavailable'}</span>
             </button>
 
             <Link
               to={`/products/${product.slug}`}
-              className="inline-flex items-center justify-center border border-[#F5F3EF]/20 px-3.5 py-2.5 text-[11px] font-medium uppercase tracking-[0.16em] text-[#F5F3EF]/85 hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors whitespace-nowrap"
+              className="inline-flex items-center justify-center border border-[#F5F3EF]/20 px-3 sm:px-3.5 py-2.5 text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.14em] sm:tracking-[0.16em] text-[#F5F3EF]/85 hover:border-[#C6A77A] hover:text-[#C6A77A] transition-colors whitespace-nowrap shrink-0"
             >
               Details
             </Link>
