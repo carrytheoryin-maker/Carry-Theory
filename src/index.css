@@ -119,11 +119,6 @@
   animation: ct-christmas-marquee 30s linear infinite;
 }
 
-.ct-marquee-wrapper:hover .ct-marquee-track,
-.ct-marquee-wrapper:focus-within .ct-marquee-track {
-  animation-play-state: paused;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .ct-marquee-track {
     animation: none;
