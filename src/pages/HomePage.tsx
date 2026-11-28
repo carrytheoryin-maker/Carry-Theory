@@ -37,10 +37,13 @@ export function HomePage() {
   }>({ type: 'idle', message: '' });
 
   usePageSeo({
-    title: 'Carry Theory — For Every Form | Luxury Everyday Essentials',
+    title: 'Carry Theory | For Every Form.',
     description:
-      'Discover Carry Theory’s thoughtfully designed everyday essentials—tumblers, travel mugs, ceramic mugs, MagSafe wallets, and digital products.',
+      'Carry Theory crafts refined everyday essentials—insulated tumblers, travel mugs, MagSafe wallets, and smart desk clocks designed for every form.',
     canonicalPath: '/',
+    ogImage:
+      siteConfig?.heroImageUrl ||
+      '/assets/aistudio/Warm_Studio_Still_Life_with_Tumblers_and_Mugs_2d1e9d8f.png',
   });
 
   useEffect(() => {

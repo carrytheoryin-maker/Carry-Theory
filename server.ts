@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import path from 'node:path';
 import dotenv from 'dotenv';
 import express, { type Request, type Response } from 'express';
@@ -12,6 +13,86 @@ const PORT = Number(process.env.PORT || 3000);
 function sanitizeString(value: unknown, maxLen = 500): string {
   if (typeof value !== 'string') return '';
   return value.trim().slice(0, maxLen);
+}
+
+function escapeHtmlAttr(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function renderSeoHtml(rawHtml: string, req: Request): string {
+  const db = readDb();
+  const baseUrl = (process.env.APP_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+  const cleanPath = (req.path || '/').replace(/\/+$/, '') || '/';
+
+  let title = 'Carry Theory | For Every Form.';
+  let description =
+    'Carry Theory crafts refined everyday essentials—insulated tumblers, travel mugs, MagSafe wallets, and smart desk clocks designed for every form.';
+  let imagePath =
+    db.siteConfig.heroImageUrl ||
+    '/assets/aistudio/Warm_Studio_Still_Life_with_Tumblers_and_Mugs_2d1e9d8f.png';
+
+  const productMatch = cleanPath.match(/^\/products\/([^/]+)$/);
+  if (productMatch) {
+    const product = db.products.find((p) => p.slug === productMatch[1] && p.published);
+    if (product) {
+      title = `${product.name} — Carry Theory`;
+      description = product.shortDescription || description;
+      if (product.images[0]?.url) {
+        imagePath = product.images[0].url;
+      }
+    }
+  }
+
+  const pageUrl = `${baseUrl}${cleanPath === '/' ? '/' : cleanPath}`;
+  const imageUrl = imagePath.startsWith('http') ? imagePath : `${baseUrl}${imagePath}`;
+
+  return rawHtml
+    .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtmlAttr(title)}</title>`)
+    .replace(
+      /<link\s+rel="canonical"\s+href="[^"]*"\s*\/>/,
+      `<link rel="canonical" href="${escapeHtmlAttr(pageUrl)}" />`
+    )
+    .replace(
+      /<meta\s+name="description"[\s\S]*?content="[^"]*"\s*\/>/,
+      `<meta name="description" content="${escapeHtmlAttr(description)}" />`
+    )
+    .replace(
+      /<meta\s+property="og:url"\s+content="[^"]*"\s*\/>/,
+      `<meta property="og:url" content="${escapeHtmlAttr(pageUrl)}" />`
+    )
+    .replace(
+      /<meta\s+property="og:title"\s+content="[^"]*"\s*\/>/,
+      `<meta property="og:title" content="${escapeHtmlAttr(title)}" />`
+    )
+    .replace(
+      /<meta\s+property="og:description"[\s\S]*?content="[^"]*"\s*\/>/,
+      `<meta property="og:description" content="${escapeHtmlAttr(description)}" />`
+    )
+    .replace(
+      /<meta\s+property="og:image"[\s\S]*?content="[^"]*"\s*\/>/,
+      `<meta property="og:image" content="${escapeHtmlAttr(imageUrl)}" />`
+    )
+    .replace(
+      /<meta\s+property="og:image:secure_url"[\s\S]*?content="[^"]*"\s*\/>/,
+      `<meta property="og:image:secure_url" content="${escapeHtmlAttr(imageUrl)}" />`
+    )
+    .replace(
+      /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/>/,
+      `<meta name="twitter:title" content="${escapeHtmlAttr(title)}" />`
+    )
+    .replace(
+      /<meta\s+name="twitter:description"[\s\S]*?content="[^"]*"\s*\/>/,
+      `<meta name="twitter:description" content="${escapeHtmlAttr(description)}" />`
+    )
+    .replace(
+      /<meta\s+name="twitter:image"[\s\S]*?content="[^"]*"\s*\/>/,
+      `<meta name="twitter:image" content="${escapeHtmlAttr(imageUrl)}" />`
+    )
+    .replace(/"url":\s*"https:\/\/carrytheory\.in\/"/, `"url": "${escapeHtmlAttr(`${baseUrl}/`)}"`);
 }
 
 async function startServer(): Promise<void> {
@@ -255,20 +336,37 @@ async function startServer(): Promise<void> {
     res.status(201).json({ order: createdOrder });
   });
 
-  // Vite dev middleware or static dist serving
+  // Vite dev middleware or static dist serving with dynamic Open Graph tag injection
   const isProd = process.env.NODE_ENV === 'production';
   if (!isProd) {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'spa',
+      appType: 'custom',
     });
     app.use(vite.middlewares);
+    app.get('*', async (req: Request, res: Response, next) => {
+      if (path.extname(req.path)) {
+        next();
+        return;
+      }
+      try {
+        const templatePath = path.resolve(process.cwd(), 'index.html');
+        const rawTemplate = fs.readFileSync(templatePath, 'utf8');
+        const transformed = await vite.transformIndexHtml(req.originalUrl, rawTemplate);
+        const finalHtml = renderSeoHtml(transformed, req);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml);
+      } catch (err) {
+        next(err);
+      }
+    });
   } else {
     const distDir = path.resolve(process.cwd(), 'dist');
-    app.use(express.static(distDir));
-    app.get('*', (_req: Request, res: Response) => {
-      res.sendFile(path.join(distDir, 'index.html'));
+    app.use(express.static(distDir, { index: false }));
+    app.get('*', (req: Request, res: Response) => {
+      const distHtmlPath = path.join(distDir, 'index.html');
+      const rawHtml = fs.readFileSync(distHtmlPath, 'utf8');
+      res.status(200).set({ 'Content-Type': 'text/html' }).end(renderSeoHtml(rawHtml, req));
     });
   }
 

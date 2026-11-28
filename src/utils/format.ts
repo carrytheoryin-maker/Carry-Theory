@@ -50,12 +50,15 @@ export function usePageSeo(options: {
     const canonicalHref = `${window.location.origin}${options.canonicalPath ?? window.location.pathname}`;
     setMeta('meta[property="og:url"]', 'content', canonicalHref);
 
-    if (options.ogImage) {
-      const absoluteImg = options.ogImage.startsWith('http')
-        ? options.ogImage
-        : `${window.location.origin}${options.ogImage}`;
-      setMeta('meta[property="og:image"]', 'content', absoluteImg);
-    }
+    const DEFAULT_OG_IMAGE =
+      '/assets/aistudio/Warm_Studio_Still_Life_with_Tumblers_and_Mugs_2d1e9d8f.png';
+    const rawOgImage = options.ogImage || DEFAULT_OG_IMAGE;
+    const absoluteImg = rawOgImage.startsWith('http')
+      ? rawOgImage
+      : `${window.location.origin}${rawOgImage}`;
+    setMeta('meta[property="og:image"]', 'content', absoluteImg);
+    setMeta('meta[property="og:image:secure_url"]', 'content', absoluteImg);
+    setMeta('meta[name="twitter:image"]', 'content', absoluteImg);
 
     let canonicalEl = document.querySelector('link[rel="canonical"]');
     if (!canonicalEl) {

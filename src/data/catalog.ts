@@ -287,6 +287,10 @@ export const DEFAULT_PRODUCTS: Product[] = [
         alt: 'Carry Theory Tumbler 1200ml Black top-down on pickleball court',
       },
       {
+        url: '/assets/aistudio/Customised_Tumblers_on_Textured_Display_6d7ad2f7.png',
+        alt: 'Customised Carry Theory Tumblers 1200ml in White and Black with laser engraving and UV stickers',
+      },
+      {
         url: '/assets/aistudio/DSC_5073_211cb545.JPG',
         alt: 'Carry Theory Tumbler 1200ml Black carried by ergonomic handle',
       },
@@ -667,6 +671,10 @@ export const DEFAULT_PRODUCTS: Product[] = [
       {
         url: '/assets/aistudio/DSC_4894_da7e2411.JPG',
         alt: 'Carry Theory MagSafe Wallets in Black and Dark Brown propped upright on phones',
+      },
+      {
+        url: '/assets/aistudio/Laser-Engraved_Leather_Wallet_Customisation_afb3bfc1.png',
+        alt: 'Customised Carry Theory MagSafe Wallets showing precision laser engraving on leather finish',
       },
       {
         url: '/assets/aistudio/DSC_4882_1ccde5fe.JPG',

@@ -16,7 +16,7 @@ import {
   DEFAULT_SITE_CONFIG,
 } from './seed.ts';
 
-const CURRENT_CATALOG_VERSION = 19;
+const CURRENT_CATALOG_VERSION = 21;
 
 export interface DatabaseState {
   catalogVersion?: number;
